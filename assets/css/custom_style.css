@@ -1,0 +1,51 @@
+.nav-style{
+    background-color: #2f5888!important;
+}
+.nav-link{
+    color: white!important;
+    font-size: 16px;
+    font-weight: 500;
+}
+.nav-link:hover{
+    font-weight: 700;
+}
+.nav-link-sub{
+    color: rgb(24, 24, 24)!important;
+}
+.nav-logo{
+    color: white!important;
+    font-weight: 700;
+}
+.recent-title{
+    font-size: 15px;
+    color: #4f4f4f;
+    font-weight: 600;
+}
+.recent-title:hover{
+    color: #2f5888!important;
+}
+.latest-post{
+    font-size: 16px;
+    margin-bottom: 30px!important;
+    color: #2f5888!important;
+}
+
+.nav-style-top{
+    background-color: white;
+}
+.nav-style-top .navbar{
+    padding: 0px;
+    padding: 5px 15px!important;
+}
+.modal-dialog-bg{
+    /* background-color: #616161; */
+}
+.divider{
+    height: 80%;
+    margin: auto;
+    width: 2px;
+    background-color: rgb(24, 24, 24);
+}
+.w-15{
+    width: 15%!important;
+}

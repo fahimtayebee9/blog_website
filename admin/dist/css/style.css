@@ -1,0 +1,27 @@
+.delete-option ul{
+	padding: 0;
+	margin: 0;
+}
+.delete-option ul li{
+	list-style: none;
+	display: inline;
+}
+.table-img{
+	width: 40px;
+	height: 40px;
+	border: 1px solid #ddd;
+	border-radius: 50%;
+}
+.form-img{
+	display: block;
+	width: 50px;
+	height: 50px;
+	border: 2px solid #ddd;
+	margin-bottom: 15px;
+}
+.logo-view{
+	height: 120px;
+    align-items: center;
+    display: flex;
+}
+
