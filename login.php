@@ -119,9 +119,9 @@
             if($HEIGHT <=1000 && $WIDTH <= 1000){
                 $image = rand(10000,100000)."_".$FILE_NAME;
                 $fileName = "admin/img/visitors/".$image;
-                $manipulator = new ImageManipulator($FILE_TMP);
+                // $manipulator = new ImageManipulator($FILE_TMP);
                 // resizing to 200x200
-                $newImage = $manipulator->resample(500, 500);
+                // $newImage = $manipulator->resample(500, 500);
                 move_uploaded_file($FILE_TMP,$fileName);
     
                 $insertUser = "INSERT INTO `visitor`(`name`, `email`, `password`, `status`, `image`, `join_date`) 
