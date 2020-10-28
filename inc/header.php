@@ -1,7 +1,7 @@
 <?php
     date_default_timezone_set('Asia/Dhaka');
     session_start();
-    
+    include "ImageManipulator.php";
     ob_start();
     include "admin/inc/db.php";
 ?>
