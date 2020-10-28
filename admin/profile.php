@@ -32,19 +32,51 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-3">
-
+          <?php
+            $getUserData = "SELECT * FROM users WHERE id = '{$_SESSION['id']}'";
+            $resUser     = mysqli_query($db,$getUserData);
+            while($row = mysqli_fetch_assoc($resUser)){
+              $name       = $row['name'];
+              $email      = $row['email'];
+              $phone      = $row['phone'];
+              $image      = $row['image'];
+              $address    = $row['address'];
+              $role       = $row['role'];
+              $status     = $row['status'];
+              $join_date  = $row['join_date'];
+            }
+          ?>
             <!-- Profile Image -->
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <div class="text-center">
-                  <img class="profile-user-img img-fluid img-circle"
-                       src="../../dist/img/user4-128x128.jpg"
-                       alt="User profile picture">
+                  <?php
+                    if(!empty($image)){
+                  ?>
+                      <img class="profile-user-img img-fluid img-circle" src="img/users/<?=$image?>" alt="User profile picture">
+                  <?php
+                    }
+                    else{
+                  ?>
+                      <img class="profile-user-img img-fluid img-circle" src="img/users/default.png" alt="User profile picture">
+                  <?php
+                    }
+                  ?>
+                  
                 </div>
 
-                <h3 class="profile-username text-center">Nina Mcintire</h3>
+                <h3 class="profile-username text-center"><?=$name?></h3>
 
-                <p class="text-muted text-center">Software Engineer</p>
+                <p class="text-muted text-center">
+                  <?php
+                    if($role == "1"){
+                      echo "SUPER ADMIN";
+                    }
+                    else if($role == 2){
+                      echo "EDITOR";
+                    }
+                  ?>
+                </p>
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -71,17 +103,17 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <strong><i class="fas fa-book mr-1"></i> Education</strong>
+                <strong><i class="fas fa-book mr-1"></i> Phone</strong>
 
                 <p class="text-muted">
-                  B.S. in Computer Science from the University of Tennessee at Knoxville
+                  <?=$phone?>
                 </p>
 
                 <hr>
 
                 <strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
 
-                <p class="text-muted">Malibu, California</p>
+                <p class="text-muted"><?=$address?></p>
 
                 <hr>
 
@@ -119,258 +151,235 @@
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
                     <!-- Post -->
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                        <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                        <span class="description">Shared publicly - 7:30 PM today</span>
-                      </div>
-                      <!-- /.user-block -->
-                      <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore the hate as they create awesome
-                        tools to help create filler text for everyone from bacon lovers
-                        to Charlie Sheen fans.
-                      </p>
+                    
+                      <?php
+                        $getPostsSql = "SELECT * FROM post WHERE author_id = '{$_SESSION['id']}'";
+                        $resPOSTS    = mysqli_query($db,$getPostsSql);
+                        if(mysqli_num_rows($resPOSTS) == 0){
+                      ?>
+                          <div class="alert alert-warning">
+                            No Posts Published.
+                          </div>
+                      <?php
+                        }
+                        while($rowPs = mysqli_fetch_assoc($resPOSTS)){
+                      ?>
+                        <div class="post border-0">
+                          <div class="user-block">
+                            <img class="img-circle img-bordered-sm" src="img/post/<?=$rowPs['image']?>" alt="user image">
+                            <span class="username">
+                              <a href="#"><?=$rowPs['title']?></a>
+                              <!-- <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a> -->
+                            </span>
+                            <?php
+                              $dateArrMain = explode(' ',$rowPs['post_date']);
+                              $datePart    = $dateArrMain[0];
+                              $timePart    = $dateArrMain[1];
+                              $am_array    = ["7","8","9","9:30","10","11"];
+                              $timeArr     = explode(':',date("h:i:s",strtotime('+24 hour',strtotime($timePart))));
+                              if(in_array($timeArr[0],$am_array)){
+                                  $time =  date("h:i A",strtotime('+24 hour',strtotime($timeArr[0])));
+                              }
+                              else if(!in_array($timeArr[0],$am_array)){
+                                  $time =  date("h:i A",strtotime('+12 hour',strtotime($timeArr[0])));
+                              }
+                              else{
+                                  $time =  date("h:i A",strtotime('+24 hour',strtotime($timeArr[0])));
+                              }
+                              $date_arrPost = explode('-',$datePart);
+                              $date = $date_arrPost[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arrPost[1], 10)),0,3) .", " . $date_arrPost[0];
+                            ?>
+                            <span class="description">Posted On - <?=$time?> <?=$date?></span>
+                          </div>
+                          <!-- /.user-block -->
+                          <p>
+                            <?=substr($rowPs['description'],0,250)?>
+                          </p>
 
                       <p>
-                        <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                        <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                        <!-- <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a> -->
+                        <!-- <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a> -->
                         <span class="float-right">
                           <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
+                            <?php
+                              $total_comment = $db->query("SELECT * FROM comments WHERE post_id = '{$rowPs['post_id']}'")->num_rows;
+                            ?>
+                            <i class="far fa-comments mr-1"></i> Comments (<?=$total_comment?>)
                           </a>
                         </span>
                       </p>
-
-                      <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
                     </div>
+                  <?php
+                    }
+                  ?>
+                      <!-- <input class="form-control form-control-sm" type="text" placeholder="Type a comment"> -->
+                    
                     <!-- /.post -->
 
-                    <!-- Post -->
-                    <div class="post clearfix">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
-                        <span class="username">
-                          <a href="#">Sarah Ross</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                        <span class="description">Sent you a message - 3 days ago</span>
-                      </div>
-                      <!-- /.user-block -->
-                      <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore the hate as they create awesome
-                        tools to help create filler text for everyone from bacon lovers
-                        to Charlie Sheen fans.
-                      </p>
-
-                      <form class="form-horizontal">
-                        <div class="input-group input-group-sm mb-0">
-                          <input class="form-control form-control-sm" placeholder="Response">
-                          <div class="input-group-append">
-                            <button type="submit" class="btn btn-danger">Send</button>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <!-- /.post -->
-
-                    <!-- Post -->
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user6-128x128.jpg" alt="User Image">
-                        <span class="username">
-                          <a href="#">Adam Jones</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                        <span class="description">Posted 5 photos - 5 days ago</span>
-                      </div>
-                      <!-- /.user-block -->
-                      <div class="row mb-3">
-                        <div class="col-sm-6">
-                          <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-sm-6">
-                          <div class="row">
-                            <div class="col-sm-6">
-                              <img class="img-fluid mb-3" src="../../dist/img/photo2.png" alt="Photo">
-                              <img class="img-fluid" src="../../dist/img/photo3.jpg" alt="Photo">
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-sm-6">
-                              <img class="img-fluid mb-3" src="../../dist/img/photo4.jpg" alt="Photo">
-                              <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
-                            </div>
-                            <!-- /.col -->
-                          </div>
-                          <!-- /.row -->
-                        </div>
-                        <!-- /.col -->
-                      </div>
-                      <!-- /.row -->
-
-                      <p>
-                        <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                        <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                        <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
-                          </a>
-                        </span>
-                      </p>
-
-                      <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                    </div>
-                    <!-- /.post -->
+                    
                   </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
                     <!-- The timeline -->
                     <div class="timeline timeline-inverse">
                       <!-- timeline time label -->
-                      <div class="time-label">
-                        <span class="bg-danger">
-                          10 Feb. 2014
-                        </span>
-                      </div>
-                      <!-- /.timeline-label -->
-                      <!-- timeline item -->
-                      <div>
-                        <i class="fas fa-envelope bg-primary"></i>
+                      <?php
+                        $getComments  = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
+                                        comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
+                                        post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
+                                        inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
+                        $resPost      = mysqli_query($db,$getComments);
+                        $firstPostDate = "";
+                        
+                        if(mysqli_num_rows($resPost) == 0){
+                          ?>
+                            <div class="alert alert-warning">
+                              Nothing to show.
+                            </div>
+                          <?php
+                        }
+                        else{
+                          while($rowPost = mysqli_fetch_assoc($resPost)){
+                            $title          = $rowPost['title'];
+                            $description    = $rowPost['description'];
+                            $category_id    = $rowPost['category_id'];
+                            $author_id      = $rowPost['author_id'];
+                            $status         = $rowPost['status'];
+                            $meta           = $rowPost['meta'];
+                            $post_date      = $rowPost['post_date'];
+                            $cmt_id         = $rowPost['cmt_id'];
+                            $comments       = $rowPost['comments'];
+                            $visitor_id     = $rowPost['visitor_id'];
+                            $is_parent      = $rowPost['is_parent'];
+                            $cmt_date       = $rowPost['cmt_date'];
+                            $cmt_newStatus  = $rowPost['cmt_newStatus'];
+                            $cmt_status     = $rowPost['cmt_status'];
+                            $cmtDateArr     = explode(' ',$firstPostDate);
+                            $i = 0;
+                      ?>
+                            <div class="time-label">
+                              <span class="bg-info">
+                                <?php 
+                                    $dateArea = explode(' ',$cmt_date);
+                                    $date_arr = explode('-',$dateArea[0]);
+                                    echo $date_arr[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arr[1], 10)),0,3) .", " . $date_arr[0];
+                                ?>
+                              </span>
+                            </div>
+                      <?php
+                            $getDataByDate = "SELECT * FROM comments WHERE cmt_date LIKE '$cmt_date%'";
+                            $resData       = mysqli_query($db,$getDataByDate);
+                            while($rowDate = mysqli_fetch_assoc($resData)){
+                              $cmt_id_byDate         = $rowDate['cmt_id'];
+                              $comments_byDate       = $rowDate['comments'];
+                              $visitor_id_byDate     = $rowDate['visitor_id'];
+                              $is_parent_byDate      = $rowDate['is_parent'];
+                              $cmt_date_byDate       = $rowDate['cmt_date'];
+                              $cmt_newStatus_byDate  = $rowDate['new_status'];
+                              $cmt_status_byDate     = $rowDate['status'];
+                              
+                              $getVisitorInfoSql = "SELECT * FROM visitor WHERE visitor_id = '$visitor_id_byDate'";
+                              $resVisitor        = mysqli_query($db,$getVisitorInfoSql);
+                              while($rowVisitor = mysqli_fetch_assoc($resVisitor)){
+                                $vs_name = $rowVisitor['name'];
+                              }
+                          ?>
+                                <!-- timeline item -->
+                                <div>
+                                  <i class="fas fa-comments bg-warning"></i>
 
-                        <div class="timeline-item">
-                          <span class="time"><i class="far fa-clock"></i> 12:05</span>
+                                  <div class="timeline-item">
+                                    <span class="time"><i class="far fa-clock"></i>
+                                      <?php
+                                        $timeDiff = time() - strtotime($cmt_date_byDate) ;
+                                        $hours    = floor($timeDiff / (60*60)); 
+                                        $minutes  = floor($hours/60);
+                                        if($minutes > 0 && $hours < 1){
+                                            echo $minutes . " Mins ago";
+                                        }
+                                        else if($hours < 24 && $hours >= 1){
+                                            echo $hours . " hours ago";
+                                        }
+                                        else if($hours > 24){
+                                            echo floor($hours/24) . " Days ago"; 
+                                        }
+                                      ?>
+                                    </span>
 
-                          <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+                                    <h3 class="timeline-header"><a href="#"><?=$vs_name?></a> commented on your post</h3>
 
-                          <div class="timeline-body">
-                            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                            weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                            jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                            quora plaxo ideeli hulu weebly balihoo...
-                          </div>
-                          <div class="timeline-footer">
-                            <a href="#" class="btn btn-primary btn-sm">Read more</a>
-                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- END timeline item -->
-                      <!-- timeline item -->
-                      <div>
-                        <i class="fas fa-user bg-info"></i>
+                                    <div class="timeline-body">
+                                      <?=$comments?>
+                                    </div>
+                                    <div class="timeline-footer">
+                                      <a href="" class="btn btn-secondary btn-flat btn-sm">View comment</a>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- END timeline item -->
+                          <?php
 
-                        <div class="timeline-item">
-                          <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
-
-                          <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
-                          </h3>
-                        </div>
-                      </div>
-                      <!-- END timeline item -->
-                      <!-- timeline item -->
-                      <div>
-                        <i class="fas fa-comments bg-warning"></i>
-
-                        <div class="timeline-item">
-                          <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
-
-                          <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-
-                          <div class="timeline-body">
-                            Take me to your leader!
-                            Switzerland is small and neutral!
-                            We are more like Germany, ambitious and misunderstood!
-                          </div>
-                          <div class="timeline-footer">
-                            <a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- END timeline item -->
-                      <!-- timeline time label -->
-                      <div class="time-label">
-                        <span class="bg-success">
-                          3 Jan. 2014
-                        </span>
-                      </div>
-                      <!-- /.timeline-label -->
-                      <!-- timeline item -->
-                      <div>
-                        <i class="fas fa-camera bg-purple"></i>
-
-                        <div class="timeline-item">
-                          <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
-
-                          <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-
-                          <div class="timeline-body">
-                            <img src="https://placehold.it/150x100" alt="...">
-                            <img src="https://placehold.it/150x100" alt="...">
-                            <img src="https://placehold.it/150x100" alt="...">
-                            <img src="https://placehold.it/150x100" alt="...">
-                          </div>
-                        </div>
-                      </div>
-                      <!-- END timeline item -->
-                      <div>
-                        <i class="far fa-clock bg-gray"></i>
-                      </div>
+                            }
+                          }
+                        }
+                      ?>
+                      
+                      
                     </div>
                   </div>
                   <!-- /.tab-pane -->
 
                   <div class="tab-pane" id="settings">
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" action="profile.php?do=Insert" method="POST">
                       <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                          <input type="email" class="form-control" id="inputName" placeholder="Name">
+                          <input type="name" class="form-control" name="name" id="inputName" placeholder="Name" value="<?=$name?>">
                         </div>
                       </div>
                       <div class="form-group row">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                          <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                          <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email" value="<?=$email?>">
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputName2" class="col-sm-2 col-form-label">Name</label>
+                        <label for="inputName2" class="col-sm-2 col-form-label">Password</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="inputName2" placeholder="Name">
+                          <input type="password" class="form-control" name="password" id="inputName2" placeholder="Password" value="">
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputExperience" class="col-sm-2 col-form-label">Experience</label>
+                        <label for="inputExperience" class="col-sm-2 col-form-label">Address</label>
                         <div class="col-sm-10">
-                          <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                          <textarea class="form-control" name="address" id="inputExperience" placeholder="Experience"><?=$address?></textarea>
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputSkills" class="col-sm-2 col-form-label">Skills</label>
+                        <label for="inputSkills" class="col-sm-2 col-form-label">Phone</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                          <input type="text" class="form-control" name="phone" id="inputSkills" placeholder="Skills" value="<?=$phone?>">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputSkills" class="col-sm-2 col-form-label">Profile Image</label>
+                        <div class="col-sm-10">
+                          <input type="file" class="form-control-file" name="image" id="profileImage" placeholder="Profile Image">
                         </div>
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <div class="checkbox">
                             <label>
-                              <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
+                              <input type="checkbox" name="terms"> I agree to the <a href="#">terms and conditions</a>
                             </label>
+                            <input type="hidden" name="userID" id="user_id" value="<?=$_SESSION['id']?>">
                           </div>
                         </div>
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
-                          <button type="submit" class="btn btn-danger">Submit</button>
+                          <input type="submit" class="btn btn-danger" value="Submit">
                         </div>
                       </div>
                     </form>
@@ -389,6 +398,150 @@
     </section>
     <!-- /.content -->
   </div>
+
+  <?php
+    $do = isset($_GET['do']) ? $_GET['do'] : "";
+    if($do == "Insert"){
+      if($_SERVER['REQUEST_METHOD'] == "POST"){
+        if(isset($_POST['terms'])){
+          $updateUserID = $_POST['userID'];
+          $name         = $_POST['name'];
+          $email        = $_POST['email'];
+          $password     = $_POST['password'];
+          // $repassword   = $_POST['repassword'];
+          $address      = $_POST['address'];
+          $phone        = $_POST['phone'];
+          $imageName    = $_FILES['image']['name'];
+
+          if ( !empty($imageName) ){
+            // $imageName    = $_FILES['image']['name'];
+            $imageSize    = $_FILES['image']['size'];
+            $imageTmp     = $_FILES['image']['tmp_name'];
+
+            $imageAllowedExtension = array("jpg", "jpeg", "png");
+            $imageExtension = strtolower( end( explode('.', $imageName) ) );
+            
+            $formErrors = array();
+
+            if ( strlen($name) < 3 ){
+              $formErrors = array('Username is too short!!!');
+            }
+            if ( $password != $repassword ){
+              $formErrors = array('Password Doesn\'t match!!!');
+            }
+            if ( !empty($imageName) ){
+              if ( !empty($imageName) && !in_array($imageExtension, $imageAllowedExtension) ){
+                $formErrors = array('Invalid Image Format. Please Upload a JPG, JPEG or PNG image');
+              }
+              if ( !empty($imageSize) && $imageSize > 2097152 ){
+                $formErrors = array('Image Size is Too Large! Allowed Image size Max is 2 MB.');
+              }
+            }
+          }
+
+          // Print the Errors 
+          foreach( $formErrors as $error ){
+            echo '<div class="alert alert-warning">' . $error . '</div>';
+          }
+
+          if ( empty($formErrors) ){
+
+            // Upload Image and Change the Password
+            if ( !empty($password) && !empty($imageName) ){
+              // Encrypted Password
+              $hassedPass = sha1($password);
+
+              // Delete the Existing Image while update the new image
+              $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
+              $data = mysqli_query($db, $deleteImageSQL);
+              while( $row = mysqli_fetch_assoc($data) ){
+                $existingImage = $row['image'];
+              }
+              unlink('img/users/'. $existingImage);
+              
+              // Change the Image Name
+              $image = rand(0, 999999) . '_' .$imageName;
+              // Upload the Image to its own Folder Location
+              move_uploaded_file($imageTmp, "img\users\\" . $image );
+
+              $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', image='$image' WHERE id = '$updateUserID' ";
+
+              $addUser = mysqli_query($db, $sql);
+
+              if ( $addUser ){
+                header("Location: users.php?do=Manage");
+              }
+              else{
+                die("MySQLi Query Failed." . mysqli_error($db));
+              }
+            }
+
+            // Change the Image Only
+            else if ( !empty($imageName) && empty($password) ){
+              // Delete the Existing Image while update the new image
+              $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
+              $data = mysqli_query($db, $deleteImageSQL);
+              while( $row = mysqli_fetch_assoc($data) ){
+                $existingImage = $row['image'];
+              }
+              unlink('img/users/'. $existingImage);
+              
+              // Change the Image Name
+              $image = rand(0, 999999) . '_' .$imageName;
+              // Upload the Image to its own Folder Location
+              move_uploaded_file($imageTmp, "img\users\\" . $image );
+
+              $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', image='$image' WHERE id = '$updateUserID' ";
+
+              $addUser = mysqli_query($db, $sql);
+
+              if ( $addUser ){
+                header("Location: users.php?do=Manage");
+              }
+              else{
+                die("MySQLi Query Failed." . mysqli_error($db));
+              }
+            }
+            // Change the Password Only
+            else if ( !empty($password) && empty($imageName) ){
+              // Encrypted Password
+              $hassedPass = sha1($password);
+
+              $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone' WHERE id = '$updateUserID' ";
+
+              $addUser = mysqli_query($db, $sql);
+
+              if ( $addUser ){
+                header("Location: users.php?do=Manage");
+              }
+              else{
+                die("MySQLi Query Failed." . mysqli_error($db));
+              }
+            }
+            // No Password and Image Update
+            else{
+              $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone' WHERE id = '$updateUserID' ";
+
+              $addUser = mysqli_query($db, $sql);
+
+              if ( $addUser ){
+
+                header("Location: profile.php");
+              }
+              else{
+                die("MySQLi Query Failed." . mysqli_error($db));
+              }
+            }
+            
+          }
+        }
+        else{
+          echo "<script>alert('Terms NOT Accepted')</script>";
+        }
+      }
+    }
+  ?>
+
   <!-- /.content-wrapper -->
 
   <!-- Footer -->

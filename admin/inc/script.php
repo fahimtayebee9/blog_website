@@ -184,6 +184,8 @@
 </script>
 
 <script>
+  
+  // REMOVING NOTIFICATION COUNT
   function removeCount(){
     var xhttp = new XMLHttpRequest();
     xhttp.open('POST', 'controllers/category_controller.php', true);
@@ -195,6 +197,45 @@
               document.getElementById('new_count').style.display = "none";
             }else{
               document.getElementById('new_count').style.display = "";
+            }
+        }	
+    }
+  }
+</script>
+
+<script>
+  // UPDATE COMMENT STATUS
+  var Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+  });
+  
+  function updateComment(cmt_id,is_parent){
+    var status_up = document.getElementById('status').value;
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('POST', 'controllers/category_controller.php', true);
+    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhttp.send('updateID='+cmt_id+"&status_up="+status_up+"&is_parent="+is_parent);
+    xhttp.onreadystatechange = function (){
+        if(this.readyState == 4 && this.status == 200){
+            if(this.responseText != ""){
+              Toast.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Comment Status Has been Updated',
+                showConfirmButton: false,
+                timer: 1500
+              })
+            }else{
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Comment Status Not Updated',
+                showConfirmButton: false,
+                timer: 1500
+              })
             }
         }	
     }

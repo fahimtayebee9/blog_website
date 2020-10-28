@@ -47,6 +47,7 @@
                         $status     = $row['status'];
                         $visitor_id     = $row['visitor_id'];
                         $cmt_date     = $row['cmt_date'];
+                        $is_parent    = $row['is_parent'];
 
                         $getVisitorName = "SELECT * FROM visitor WHERE visitor_id = '$visitor_id'";
                         $resVsIn        = mysqli_query($db,$getVisitorName);
@@ -75,42 +76,47 @@
                             </div>
                         </div>
                         <div class="card-body" style="display: block;">
-                            <form action="comments.php?do=Update" method="POST" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label for="name">Visitor Name</label>
-                                    <input type="text" name="name" class="form-control" disabled autocomplete="off" required="required" id="name" value="<?php echo $visitor_name; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea class="form-control" rows="5" style="resize: none;" disabled name="desc"><?php echo $comments; ?></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">Post Title</label>
-                                    <input type="text" name="name" class="form-control" disabled autocomplete="off" required="required" id="name" value="<?php echo $post_title; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">Comment Date</label>
-                                    <?php 
-                                        $cmtdate  = $row['cmt_date']; 
-                                        $dateArea = explode(' ',$cmtdate);
-                                        $date_arr = explode('-',$dateArea[0]);
-                                        $cmt_date = $date_arr[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arr[1], 10)),0,3) .", " . $date_arr[0];
-                                    ?>
-                                    <input type="text" name="name" class="form-control" disabled autocomplete="off" required="required" id="name" value="<?php echo $cmt_date; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="form-control" name="status">
-                                        <option value="1">Please Select the Category Status</option>
-                                        <option value="1" <?php if ( $status == 1 ){ echo 'selected'; } ?> >Visible</option>
-                                        <option value="0" <?php if ( $status == 0 ){ echo 'selected'; } ?> >Hide</option>
-                                    </select> 
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" name="updateID" value="<?php echo $cmt_id; ?>">
-                                    <input type="submit" name="updateCategory" class="btn btn-block btn-primary btn-flat" value="Save Changes">
-                                </div>
-                            </form>
+                            <div class="col-md-12">
+                                <form action="comments.php?do=Update" method="POST" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="name">Visitor Name</label>
+                                        <input type="text" name="name" class="form-control" disabled autocomplete="off" required="required" id="name" value="<?php echo $visitor_name; ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea class="form-control" rows="5" style="resize: none;" disabled name="desc"><?php echo $comments; ?></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Post Title</label>
+                                        <input type="text" name="title" class="form-control" disabled autocomplete="off" required="required" id="title" value="<?php echo $post_title; ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Comment Date</label>
+                                        <?php 
+                                            $cmtdate  = $row['cmt_date']; 
+                                            $dateArea = explode(' ',$cmtdate);
+                                            $date_arr = explode('-',$dateArea[0]);
+                                            $cmt_date = $date_arr[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arr[1], 10)),0,3) .", " . $date_arr[0];
+                                        ?>
+                                        <input type="text" name="cmt_date" class="form-control" disabled autocomplete="off" required="required" id="cmt_date" value="<?php echo $cmt_date; ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control" name="status" id="status">
+                                            <option value="1">Please Select the Category Status</option>
+                                            <option value="1" <?php if ( $status == 1 ){ echo 'selected'; } ?> >Visible</option>
+                                            <option value="0" <?php if ( $status == 0 ){ echo 'selected'; } ?> >Hide</option>
+                                        </select> 
+                                    </div>
+                            </div>
+                            <div class="col-md-4 m-auto">
+                                    <div class="form-group">
+                                        <input type="hidden" name="updateID" value="<?php echo $cmt_id; ?>">
+                                        <input type="submit" name="updateCategory" class="btn btn-block btn-primary btn-flat" onclick="updateComment(<?=$cmt_id;?>,<?=$is_parent?>)" value="Save Changes">
+                                    </div>
+                                </form>
+                            </div>
+                                
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -268,7 +274,7 @@
                                                 </td>
                                                 <td><?php echo $rowRepVisit['name']; ?></td>
                                                 <td>
-                                                    <?=substr($rowCmt['comments'],0,50);?>
+                                                    <?=substr($rowRep['comments'],0,50);?>
                                                 </td>
                                                 <td>
                                                     <?php
@@ -277,12 +283,12 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                        if ( $rowCmt['status'] == 0 ){ 
+                                                        if ( $rowRep['status'] == 0 ){ 
                                                     ?>
                                                             <span class="badge badge-danger">Hidden</span>
                                                     <?php 
                                                         }
-                                                        else if ( $rowCmt['status'] == 1 ){ ?>
+                                                        else if ( $rowRep['status'] == 1 ){ ?>
                                                             <span class="badge badge-success">Visible</span>
                                                     <?php 
                                                         }
@@ -290,7 +296,7 @@
                                                 </td>
                                                 <td>
                                                     <?php 
-                                                        $cmtdate = $rowCmt['cmt_date']; 
+                                                        $cmtdate = $rowRep['cmt_date']; 
                                                         $dateArea = explode(' ',$cmtdate);
                                                         $date_arr = explode('-',$dateArea[0]);
                                                         echo $date_arr[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arr[1], 10)),0,3) .", " . $date_arr[0];
@@ -298,7 +304,7 @@
                                                 </td>
         
                                                 <td>
-                                                    <a class="btn btn-info btn-sm" href="" data-toggle="modal" data-target="#edit_<?php echo  $rowRep['cmt_id']; ?>">
+                                                    <a class="btn btn-info btn-sm" href="comments.php?edit=<?php echo $rowRep['cmt_id']; ?>" >
                                                         <i class="fas fa-pencil-alt">
                                                         </i>
                                                         Edit
@@ -403,31 +409,36 @@
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
                     $comment_id = $_POST['updateID'];
                     $status_up  = $_POST['status'];
+                    
                     $success = [];
                     $error   = [];
-                    $updateSQL = "UPDATE `comments` SET `status`= '$status_up' WHERE cmt_id = '$comment_id'";
-                    echo $updateSQL;
-                    $updateRes = mysqli_query($db,$updateSQL);
-                    if($updateRes){
-                        array_push($success,"Comment Updated Successfully");
+                    // $updateSQL = "UPDATE `comments` SET `status`= '$status_up' WHERE cmt_id = '$comment_id'";
+                    // echo $updateSQL;
+                    // $updateRes = mysqli_query($db,$updateSQL);
+                    // if($updateRes){
+                    //     $success [] = "Comment Updated Successfully";
 
-                        $_SESSION['toastr']['message'] = $success;
-                        $_SESSION['toastr']['message_type'] = "success";
-                        header("location: comments.php?do=Manage");
-                        exit();
-                    }
-                    else{
-                        array_push($error,"Comment Not Updated Successfully!!");
-                        $_SESSION['toastr']['message'] = $error;
-                        $_SESSION['toastr']['message_type'] = "error";
-                        header("location: comments.php?do=Manage");
-                        exit();
-                    }
+                    //     $_SESSION['toastr']['message'] = $success;
+                    //     $_SESSION['toastr']['message_type'] = "success";
+                    //     header("location: comments.php?do=Manage");
+                    //     exit();
+                    // }
+                    // else{
+                    //     $error [] = "Comment Not Updated Successfully!!" . mysqli_error($db);
+                    //     $_SESSION['toastr']['message'] = $error;
+                    //     $_SESSION['toastr']['message_type'] = "error";
+                    //     header("location: comments.php?do=Manage");
+                    //     exit();
+                    // }
                 }
                 ?>
                     <div class="alert alert-danger">
                         <?=$updateSQL;?>
                     </div>
+
+                    <script>
+                        alert("Comment Id : " + <?=$comment_id?> + "\nStatus : " + <?=$status_up?>);
+                    </script>
                 <?php
             }
         ?>

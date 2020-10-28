@@ -535,127 +535,126 @@
                       $imageName    = $_FILES['image']['name'];
 
                       if ( !empty($imageName) ){
-                        // Preapre the Image
-                      // $imageName    = $_FILES['image']['name'];
-                      $imageSize    = $_FILES['image']['size'];
-                      $imageTmp     = $_FILES['image']['tmp_name'];
+                        // $imageName    = $_FILES['image']['name'];
+                        $imageSize    = $_FILES['image']['size'];
+                        $imageTmp     = $_FILES['image']['tmp_name'];
 
-                      $imageAllowedExtension = array("jpg", "jpeg", "png");
-                      $imageExtension = strtolower( end( explode('.', $imageName) ) );
-                      
-                      $formErrors = array();
-
-                      if ( strlen($name) < 3 ){
-                        $formErrors = 'Username is too short!!!';
-                      }
-                      if ( $password != $repassword ){
-                        $formErrors = 'Password Doesn\'t match!!!';
-                      }
-                      if ( !empty($imageName) ){
-                        if ( !empty($imageName) && !in_array($imageExtension, $imageAllowedExtension) ){
-                          $formErrors = 'Invalid Image Format. Please Upload a JPG, JPEG or PNG image';
-                        }
-                        if ( !empty($imageSize) && $imageSize > 2097152 ){
-                          $formErrors = 'Image Size is Too Large! Allowed Image size Max is 2 MB.';
-                        }
-                      }
-                      }
-
-                      // Print the Errors 
-                      foreach( $formErrors as $error ){
-                        echo '<div class="alert alert-warning">' . $error . '</div>';
-                      }
-
-                      if ( empty($formErrors) ){
-
-
-                        // Upload Image and Change the Password
-                        if ( !empty($password) && !empty($imageName) ){
-                          // Encrypted Password
-                          $hassedPass = sha1($password);
-
-                          // Delete the Existing Image while update the new image
-                          $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
-                          $data = mysqli_query($db, $deleteImageSQL);
-                          while( $row = mysqli_fetch_assoc($data) ){
-                            $existingImage = $row['image'];
-                          }
-                          unlink('img/users/'. $existingImage);
-                          
-                          // Change the Image Name
-                          $image = rand(0, 999999) . '_' .$imageName;
-                          // Upload the Image to its own Folder Location
-                          move_uploaded_file($imageTmp, "img\users\\" . $image );
-
-                          $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
-
-                          $addUser = mysqli_query($db, $sql);
-
-                          if ( $addUser ){
-                            header("Location: users.php?do=Manage");
-                          }
-                          else{
-                            die("MySQLi Query Failed." . mysqli_error($db));
-                          }
-                        }
-
-                        // Change the Image Only
-                        else if ( !empty($imageName) && empty($password) ){
-                          // Delete the Existing Image while update the new image
-                          $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
-                          $data = mysqli_query($db, $deleteImageSQL);
-                          while( $row = mysqli_fetch_assoc($data) ){
-                            $existingImage = $row['image'];
-                          }
-                          unlink('img/users/'. $existingImage);
-                          
-                          // Change the Image Name
-                          $image = rand(0, 999999) . '_' .$imageName;
-                          // Upload the Image to its own Folder Location
-                          move_uploaded_file($imageTmp, "img\users\\" . $image );
-
-                          $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
-
-                          $addUser = mysqli_query($db, $sql);
-
-                          if ( $addUser ){
-                            header("Location: users.php?do=Manage");
-                          }
-                          else{
-                            die("MySQLi Query Failed." . mysqli_error($db));
-                          }
-                        }
-                        // Change the Password Only
-                        else if ( !empty($password) && empty($imageName) ){
-                          // Encrypted Password
-                          $hassedPass = sha1($password);
-
-                          $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
-
-                          $addUser = mysqli_query($db, $sql);
-
-                          if ( $addUser ){
-                            header("Location: users.php?do=Manage");
-                          }
-                          else{
-                            die("MySQLi Query Failed." . mysqli_error($db));
-                          }
-                        }
-                        // No Password and Image Update
-                        else{
-                          $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
-
-                          $addUser = mysqli_query($db, $sql);
-
-                          if ( $addUser ){
-                            header("Location: users.php?do=Manage");
-                          }
-                          else{
-                            die("MySQLi Query Failed." . mysqli_error($db));
-                          }
-                        }
+                        $imageAllowedExtension = array("jpg", "jpeg", "png");
+                        $imageExtension = strtolower( end( explode('.', $imageName) ) );
                         
+                        $formErrors = array();
+
+                        if ( strlen($name) < 3 ){
+                          $formErrors = 'Username is too short!!!';
+                        }
+                        if ( $password != $repassword ){
+                          $formErrors = 'Password Doesn\'t match!!!';
+                        }
+                        if ( !empty($imageName) ){
+                          if ( !empty($imageName) && !in_array($imageExtension, $imageAllowedExtension) ){
+                            $formErrors = 'Invalid Image Format. Please Upload a JPG, JPEG or PNG image';
+                          }
+                          if ( !empty($imageSize) && $imageSize > 2097152 ){
+                            $formErrors = 'Image Size is Too Large! Allowed Image size Max is 2 MB.';
+                          }
+                        }
                       }
+
+                        // Print the Errors 
+                        foreach( $formErrors as $error ){
+                          echo '<div class="alert alert-warning">' . $error . '</div>';
+                        }
+
+                        if ( empty($formErrors) ){
+
+
+                          // Upload Image and Change the Password
+                          if ( !empty($password) && !empty($imageName) ){
+                            // Encrypted Password
+                            $hassedPass = sha1($password);
+
+                            // Delete the Existing Image while update the new image
+                            $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
+                            $data = mysqli_query($db, $deleteImageSQL);
+                            while( $row = mysqli_fetch_assoc($data) ){
+                              $existingImage = $row['image'];
+                            }
+                            unlink('img/users/'. $existingImage);
+                            
+                            // Change the Image Name
+                            $image = rand(0, 999999) . '_' .$imageName;
+                            // Upload the Image to its own Folder Location
+                            move_uploaded_file($imageTmp, "img\users\\" . $image );
+
+                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
+
+                            $addUser = mysqli_query($db, $sql);
+
+                            if ( $addUser ){
+                              header("Location: users.php?do=Manage");
+                            }
+                            else{
+                              die("MySQLi Query Failed." . mysqli_error($db));
+                            }
+                          }
+
+                          // Change the Image Only
+                          else if ( !empty($imageName) && empty($password) ){
+                            // Delete the Existing Image while update the new image
+                            $deleteImageSQL = "SELECT * FROM users WHERE id = '$updateUserID'";
+                            $data = mysqli_query($db, $deleteImageSQL);
+                            while( $row = mysqli_fetch_assoc($data) ){
+                              $existingImage = $row['image'];
+                            }
+                            unlink('img/users/'. $existingImage);
+                            
+                            // Change the Image Name
+                            $image = rand(0, 999999) . '_' .$imageName;
+                            // Upload the Image to its own Folder Location
+                            move_uploaded_file($imageTmp, "img\users\\" . $image );
+
+                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
+
+                            $addUser = mysqli_query($db, $sql);
+
+                            if ( $addUser ){
+                              header("Location: users.php?do=Manage");
+                            }
+                            else{
+                              die("MySQLi Query Failed." . mysqli_error($db));
+                            }
+                          }
+                          // Change the Password Only
+                          else if ( !empty($password) && empty($imageName) ){
+                            // Encrypted Password
+                            $hassedPass = sha1($password);
+
+                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
+
+                            $addUser = mysqli_query($db, $sql);
+
+                            if ( $addUser ){
+                              header("Location: users.php?do=Manage");
+                            }
+                            else{
+                              die("MySQLi Query Failed." . mysqli_error($db));
+                            }
+                          }
+                          // No Password and Image Update
+                          else{
+                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
+
+                            $addUser = mysqli_query($db, $sql);
+
+                            if ( $addUser ){
+                              header("Location: users.php?do=Manage");
+                            }
+                            else{
+                              die("MySQLi Query Failed." . mysqli_error($db));
+                            }
+                          }
+                          
+                        }
 
                     }
                     // Update End

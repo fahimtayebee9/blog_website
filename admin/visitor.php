@@ -132,17 +132,15 @@
                                         <td><?php echo $join_date; ?></td>
                                         <td>
                                             <a class="btn btn-info btn-sm" href="visitor.php?do=Edit&edit=<?php echo $id; ?>">
-                                                <i class="fas fa-pencil-alt">
-                                                </i>
+                                                <i class="fas fa-pencil-alt"></i>
                                                 Edit
                                             </a>
 
                                             <a class="btn btn-danger btn-sm" href="" data-toggle="modal" data-target="#delete<?php echo $id; ?>">
-                                                    <i class="fas fa-trash">
-                                                    </i>
-                                                    Delete
+                                                <i class="fas fa-trash"></i>
+                                                Delete
                                             </a>
-
+                                            
                                         </td>
                                     </tr> 
 

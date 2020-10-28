@@ -234,10 +234,17 @@
                                                         <p><?=$comment_desc;?></p>
                                                     </div>
                                                     <!-- Comment Box End -->
-                                                    <div class="btn w-25 justify-content-between">
-                                                        <a class="reply-btn" href="#post_comment" type="" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Reply</a>
-                                                        <a class="reply-btn" href="#post_comment" type="" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Edit</a>
-                                                    </div>
+                                                    <?php
+                                                        if(isset($_SESSION['visitorID'])){
+                                                    ?>
+                                                        <div class="btn w-25 justify-content-between">
+                                                            <a class="reply-btn" href="#post_comment" type="" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Reply</a>
+                                                            <a class="reply-btn" href="#post_comment" type="" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Edit</a>
+                                                        </div>
+                                                    <?php
+                                                        }
+                                                    ?>
+                                                    
                                                 </div>
                                             </div>
                                             <!-- Single Comment Post End -->
@@ -303,10 +310,16 @@
                                                                     <p><?=$comment_desc_rep;?></p>
                                                                 </div>
                                                                 <!-- Comment Box End -->
-                                                                <div class="btn">
-                                                                    <a class="reply-btn" href="#post_comment" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Reply</a>
-                                                                    <a class="reply-btn" href="#post_comment" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Edit</a>
-                                                                </div>
+                                                                <?php
+                                                                    if(isset($_SESSION['visitorID'])){
+                                                                ?>
+                                                                    <div class="btn">
+                                                                        <a class="reply-btn" href="#post_comment" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Reply</a>
+                                                                        <a class="reply-btn" href="#post_comment" onclick="setCommentId(<?=$cmt_ID;?>)" value="">Edit</a>
+                                                                    </div>
+                                                                <?php
+                                                                    }
+                                                                ?>
                                                             </div>
                                                         </div>
                                                         <!-- Comment Reply Post End -->
