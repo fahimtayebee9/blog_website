@@ -216,7 +216,7 @@
                             toastr.warning("<?=$_SESSION['toastr'];?>")
                     <?php
                 }
-                // unset($_SESSION['toastr']);
+                unset($_SESSION['toastr']);
             }
         ?>
     </script>

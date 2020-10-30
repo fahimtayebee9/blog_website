@@ -168,14 +168,14 @@
                               $getSubCatSQL = "SELECT * FROM category WHERE sub_category = 0";
                               $result       = mysqli_query($db,$getSubCatSQL);
                               $rowCount     = mysqli_num_rows($result);
-                              $printData    = "";
                               if($rowCount > 0){
                                   while($rowSub = mysqli_fetch_assoc($result)){
                                   $cat_id = $rowSub['cat_id'];
                                   $cat_name = $rowSub['cat_name'];
-                                    $printData .= "<option value='$cat_id'>$cat_name</option>";
+                                ?>
+                                  <option value='<?=$cat_id?>'><?=$cat_name?></option>"
+                                <?php
                                   }
-                                  echo $printData;
                               } 
                             ?>
                           </select>

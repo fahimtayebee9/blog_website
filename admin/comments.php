@@ -77,7 +77,7 @@
                         </div>
                         <div class="card-body" style="display: block;">
                             <div class="col-md-12">
-                                <form action="comments.php?do=Update" method="POST" enctype="multipart/form-data">
+                                <form action="comments.php?update=Update" method="POST" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label for="name">Visitor Name</label>
                                         <input type="text" name="name" class="form-control" disabled autocomplete="off" required="required" id="name" value="<?php echo $visitor_name; ?>">
@@ -112,7 +112,8 @@
                             <div class="col-md-4 m-auto">
                                     <div class="form-group">
                                         <input type="hidden" name="updateID" value="<?php echo $cmt_id; ?>">
-                                        <input type="submit" name="updateCategory" class="btn btn-block btn-primary btn-flat" onclick="updateComment(<?=$cmt_id;?>,<?=$is_parent?>)" value="Save Changes">
+                                        <input type="hidden" name="is_parent" value="<?php echo $is_parent; ?>">
+                                        <input type="submit" name="updateCategory" class="btn btn-block btn-primary btn-flat" value="Save Changes"> 
                                     </div>
                                 </form>
                             </div>
@@ -123,6 +124,29 @@
                 </div>
         <?php
                 }                
+            }
+            else if(isset( $_GET['update'] )){
+                if($_SERVER['REQUEST_METHOD'] == "POST"){
+                    $comment_id = $_POST['updateID'];
+                    $status_up  = $_POST['status'];
+                    $is_parent  = $_POST['is_parent'];
+                    $success = [];
+                    $error   = [];
+                    $updateSQL = "UPDATE comments set status = '$status_up' WHERE cmt_id = '$comment_id' AND is_parent = '$is_parent'";
+                    $resultUp  = mysqli_query($db,$updateSQL);
+                    if($resultUp){
+                        $_SESSION['update_status'] = "Comment Updated Successfully";
+                        $_SESSION['type'] = "success";
+                        header("location: comments.php?do=Manage");
+                        exit();
+                    }
+                    else{
+                        $_SESSION['update_status'] = "Comment Not Updated Successfully!!<br>" . mysqli_error($db);
+                        $_SESSION['type'] = "error";
+                        header("location: comments.php?do=Manage");
+                        exit();
+                    }
+                }
             }
 
             $do = isset($_GET['do']) ? $_GET['do'] : "Manage";
@@ -409,39 +433,32 @@
                 if($_SERVER['REQUEST_METHOD'] == "POST"){
                     $comment_id = $_POST['updateID'];
                     $status_up  = $_POST['status'];
-                    
+                    $is_parent  = $_POST['is_parent'];
                     $success = [];
                     $error   = [];
-                    // $updateSQL = "UPDATE `comments` SET `status`= '$status_up' WHERE cmt_id = '$comment_id'";
-                    // echo $updateSQL;
-                    // $updateRes = mysqli_query($db,$updateSQL);
-                    // if($updateRes){
-                    //     $success [] = "Comment Updated Successfully";
-
-                    //     $_SESSION['toastr']['message'] = $success;
-                    //     $_SESSION['toastr']['message_type'] = "success";
-                    //     header("location: comments.php?do=Manage");
-                    //     exit();
-                    // }
-                    // else{
-                    //     $error [] = "Comment Not Updated Successfully!!" . mysqli_error($db);
-                    //     $_SESSION['toastr']['message'] = $error;
-                    //     $_SESSION['toastr']['message_type'] = "error";
-                    //     header("location: comments.php?do=Manage");
-                    //     exit();
-                    // }
+                    $updateSQL = "UPDATE comments set status = '$status_up' WHERE cmt_id = '$comment_id' AND is_parent = '$is_parent'";
+                    $resultUp  = mysqli_query($db,$updateSQL);
+                    if($updateRes){
+                        $_SESSION['update_status'] = "Comment Updated Successfully";
+                        $_SESSION['type'] = "success";
+                        header("location: comments.php?do=Manage");
+                        exit();
+                    }
+                    else{
+                        $_SESSION['update_status'] = "Comment Not Updated Successfully!!<br>" . mysqli_error($db);
+                        $_SESSION['type'] = "error";
+                        // header("location: comments.php?do=Manage");
+                        // exit();
+                    }
                 }
-                ?>
-                    <div class="alert alert-danger">
-                        <?=$updateSQL;?>
-                    </div>
+                $comment_id = $_POST['updateID'];
+                $status_up  = $_POST['status']; 
+                $is_parent  = $_POST['is_parent'];
 
-                    <script>
-                        alert("Comment Id : " + <?=$comment_id?> + "\nStatus : " + <?=$status_up?>);
-                    </script>
-                <?php
+                echo $updateSQL;
             }
         ?>
+           
 
         </div>
       </div>

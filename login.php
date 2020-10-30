@@ -80,16 +80,17 @@
                     $_SESSION['image']      = $row['image'];
                     $_SESSION['join_date']  = $row['join_date'];
 
-                    $_SESSION['login_toast'] = "VISITOR NAME : ".$row['name'];
                     if(strpos($action,'_')){
                         $post_arr = explode('_',$action);
                         $post = $post_arr[1];
                         header("location: single.php?post=$post");
+                        exit();
                     }
                     else{
                         $_SESSION['toastr'] = "Login Success.";
                         $_SESSION['toastr_type'] = "success";
                         header("location: index.php");
+                        exit();
                     }
                 }
             }
@@ -97,6 +98,7 @@
                 $_SESSION['toastr'] = "Login Failed.";
                 $_SESSION['toastr_type'] = "error";
                 header("location: login.php?action=Login");
+                exit();
             }
         }
     }
@@ -138,6 +140,7 @@
                         $_SESSION['toastr'] = "Registration Success. Please Login To continue.";
                         $_SESSION['toastr_type'] = "success";
                         header("location: login.php?action=Login");
+                        exit();
                     }
                 }
                 else{
@@ -145,6 +148,7 @@
                     $_SESSION['toastr'] = "Registration Failed.".mysqli_error($db);
                     $_SESSION['toastr_type'] = "error";
                     header("location: login.php?action=Login");
+                    exit();
                 }
             }
             else{
@@ -152,6 +156,7 @@
                 $_SESSION['toastr'] = "Image Size Error. Please Upload 500px*500px Image.";
                 $_SESSION['toastr_type'] = "error";
                 header("location: login.php?action=Login");
+                exit();
             }
         }
     }

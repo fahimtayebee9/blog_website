@@ -255,7 +255,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                   <label>Description</label>
-                                  <textarea class="form-control" name="description" rows="15"></textarea>
+                                  <textarea class="form-control" name="description" rows="15" id="ckeditor"></textarea>
                                   <!-- <textarea class="textarea" placeholder="Place some text here" id="editor" rows="15" name="description"
                                   style="width: 100%; font-size: 14px; resize: none; height: 420px;line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea> -->
                                 </div>    
@@ -285,6 +285,9 @@
                         $status = 0;
                       }
                       $meta             = $_POST['meta'];
+                      $html_desc        = $_POST['description'];
+                      $doc = new DOMDocument();
+                      $doc->loadHTML($html_desc);
                       $description      = mysqli_real_escape_string($db, $_POST['description']);
                       $author_id        = $_SESSION['id'];
                       $meta_arr = explode(' ',$meta);
@@ -402,18 +405,63 @@
                                       <select class="form-control" name="category_id">
                                         <option>Please select the category</option>
                                         <?php
-                                          $sql = "SELECT * FROM category WHERE status = 1 ORDER BY cat_name ASC";
+                                          $sql = "SELECT * FROM category WHERE status = 1 AND sub_category = '0' ORDER BY cat_name ASC";
                                           $readCat = mysqli_query($db, $sql);
                                           while( $row = mysqli_fetch_assoc($readCat) ){
                                             $cat_id   = $row['cat_id'];
                                             $cat_name = $row['cat_name'];
+                                            
+                                            if($category_id == $cat_id){
+                                        ?>
+                                              <option value="<?php echo $cat_id; ?>" <?php if ($category_id == $cat_id) { echo 'selected'; } ?>><?php echo $cat_name; ?></option>
+                                        <?php  
+                                              $_SESSION['sub_category'] = 0;
+                                            }
+                                            else{
+                                              $getSql = "SELECT * FROM category WHERE status = 1 AND cat_id = '$category_id' ORDER BY cat_name ASC";
+                                              $resSub = mysqli_query($db,$getSql);
+                                              while($rowSub = mysqli_fetch_assoc($resSub)){
+                                                $sub_id = $rowSub['cat_id'];
+                                                $parent_cat = $rowSub['sub_category'];
+                                              }
                                             ?>
+                                                <option value="<?php echo $cat_id; ?>" <?php if ($parent_cat == $cat_id) { echo 'selected'; } ?>><?php echo $cat_name; ?></option>
+                                            <?php
+                                              $_SESSION['parent_cat'] = $sub_id;
+                                              $_SESSION['sub_category'] = 1;
+                                            }
+                                        ?>
                                             <option value="<?php echo $cat_id; ?>" <?php if ($category_id == $cat_id) { echo 'selected'; } ?>><?php echo $cat_name; ?></option>
                                         <?php  }
                                         ?>
                                       </select>
-                                    </div>
+                                    </div>          
+                                    <?php
+                                      if(isset($_SESSION['parent_cat']) && $_SESSION['parent_cat'] != "0"){
+                                    ?>
+                                        <div class="form-group">
+                                          <label>Sub Category</label>
+                                          <select class="form-control" name="category_id" <?php if(isset( $_SESSION['sub_category'] ) && $_SESSION['sub_category'] == 0 ){ echo "disabled";}?> >
+                                            <option>Please select the category</option>
+                                            <?php
+                                              $sql = "SELECT * FROM category WHERE status = 1 AND cat_id = '{$_SESSION['parent_cat']}' ORDER BY cat_name ASC";
+                                              $readCat = mysqli_query($db, $sql);
+                                              while( $row = mysqli_fetch_assoc($readCat) ){
+                                                $sub_cat   = $row['cat_id'];
+                                                $sub_cat_name = $row['cat_name'];
+                                                ?>
+                                                <option value="<?php echo $cat_id; ?>" <?php if ($category_id == $sub_cat) { echo 'selected'; } ?>><?php echo $sub_cat_name; ?></option>
+                                            <?php  }
+                                            ?>
+                                          </select>
+                                        </div> 
+                                    <?php
+                                      }
+                                    ?>
 
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="form-group">
                                       <label>Publish Status</label>
                                       <select name="status" class="form-control">
@@ -425,11 +473,14 @@
 
                                     <div class="form-group">
                                       <label>Meta Tags</label>
-                                      <input type="text" name="meta" class="form-control" required="required" value="<?php echo $meta; ?>">
+                                      <?php
+                                        $meta_tag = str_replace(',',' ',$meta);
+                                      ?>
+                                      <input type="text" name="meta" class="form-control text-uppercase" required="required" value="<?php echo $meta_tag; ?>">
                                     </div>
 
-                                    <div class="form-group">
-                                      <label>Upload Post Thumbnail</label>
+                                    <div class="input-group d-block mb-3">
+                                      <label class="d-block">Upload Post Thumbnail</label>
                                       <?php
                                         if ( !empty($image) ){ ?>
                                           <img src="img/post/<?php echo $image; ?>" class="form-img">
@@ -438,24 +489,29 @@
                                           echo "No Image uploaded";
                                         }
                                       ?>
-                                      <input type="file" name="image" class="form-control-file">
-                                    </div>                                                           
-
+                                      <div class="custom-file d-block">
+                                        <input type="file" name="image" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                      </div>
+                                    </div> 
                                 </div>
 
-                                <div class="col-lg-6">                                
+                                <div class="col-lg-12">                                
 
                                     <div class="form-group">
                                       <label>Description</label>
-                                      <textarea class="form-control" name="description" rows="15"><?php echo $description; ?></textarea>
+                                      <textarea class="form-control" id="ckeditor" name="description" rows="15"><?php echo $description; ?></textarea>
                                     </div>
 
-                                  
+                                </div>
+                                <div class="col-md-4 m-auto">
+
                                     <div class="form-group">
                                       <input type="hidden" name="updatePostID" value="<?php echo $post_id; ?>">
                                       <input type="submit" name="updatePost" class="btn btn-block btn-primary btn-flat" value="Save Changes">
                                     </div>
                                   </form>
+
                                 </div>
                               </div>
 
@@ -479,7 +535,7 @@
                       $status           = $_POST['status'];
                       $meta             = $_POST['meta'];
                       $description      = mysqli_real_escape_string($db,$_POST['description']) ;
-
+                      $metas            = explode(' ',$meta);
                       $imageName    = $_FILES['image']['name'];
 
                       if ( !empty($imageName) ){
@@ -531,7 +587,7 @@
                           // Upload the Image to its own Folder Location
                           move_uploaded_file($imageTmp, "img\post\\" . $image );
 
-                          $sql = "UPDATE post SET title='$title', description='$description', image='$image', category_id='$category_id', status='$status', meta='$meta' WHERE post_id = '$updatePostID' ";
+                          $sql = "UPDATE post SET title='$title', description='$description', image='$image', category_id='$category_id', status='$status', meta='$metas' WHERE post_id = '$updatePostID' ";
 
                           
 
@@ -548,21 +604,25 @@
                         // Change the Password Only
                         else if ( empty($imageName) ){
 
-                          $sql = "UPDATE post SET title='$title', description='$description', category_id='$category_id', status='$status', meta='$meta' WHERE post_id = '$updatePostID' ";
+                          $sql = "UPDATE post SET title='$title', description='$description', category_id='$category_id', status='$status', meta='$metas' WHERE post_id = '$updatePostID' ";
 
-                          
+                          $updatePost = mysqli_query($db, $sql);
 
-                          $addUser = mysqli_query($db, $sql);
-
-                          if ( $addUser ){
+                          if ( $updatePost ){
+                            $_SESSION['update_status'] = "POST UPDATED SUCCESSFULLY!!";
+                            $_SESSION['type']          = "success";
                             header("Location: post.php?do=Manage");
+                            exit();
                           }
                           else{
+                            $_SESSION['update_status'] = "POST NOT UPDATED SUCCESSFULLY!!";
+                            $_SESSION['type']          = "error";
                             die("MySQLi Query Failed." . mysqli_error($db));
+                            exit();
                           }
                         }
                       }
-
+                      unset($_SESSION['parent_cat']);
                     }
                     // Update End
 

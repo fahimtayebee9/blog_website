@@ -314,18 +314,26 @@
                     // Update Start
                     if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
 
+                        $updateUserID = $_POST['updateUserID'];
                         $status       = $_POST['status'];
 
-                        $sql = "UPDATE visitor SET status='$status' WHERE visitor_id = '$updateUserID' ";
+                        $upDatesql = "UPDATE `visitor` SET `status`= '$status',id_status = '2'  WHERE visitor_id = '$updateUserID' ";
 
-                        $addUser = mysqli_query($db, $sql);
+                        
+                        $updateVisitor = mysqli_query($db, $upDatesql);
 
-                        if ( $addUser )
+                        if ( $updateVisitor )
                         { 
+                            $_SESSION['update_status'] = "VISITOR UPDATED SUCCESSFULLY..!!";
+                            $_SESSION['type']          = "success";
                             header("Location: visitor.php?do=Manage");
+                            exit();
                         }
                         else{
+                            $_SESSION['update_status'] = "VISITOR NOT UPDATED SUCCESSFULLY..!!<br>". mysqli_error($db);
+                            $_SESSION['type']          = "error";
                             die("MySQLi Query Failed." . mysqli_error($db));
+                            exit();
                         }
 
                     }

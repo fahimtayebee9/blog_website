@@ -101,6 +101,12 @@
 </script>
 
 <script>
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
     <?php
       
       if(isset($_SESSION['search_warn'])){
@@ -125,15 +131,15 @@
       else if(isset($_SESSION['toastr']['message'])){
         if(isset($_SESSION['toastr']['message_type']) && $_SESSION['toastr']['message_type'] == "warning"){
           foreach($_SESSION['toastr']['message'] as $message){
-      ?>
-          Swal.fire({
-            position: 'top-end',
-            icon: 'warning',
-            title: '<?=$message?>',
-            showConfirmButton: false,
-            timer: 1500
-          })
-      <?php
+        ?>
+            Swal.fire({
+              position: 'top-end',
+              icon: 'warning',
+              title: '<?=$message?>',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        <?php
           }
         } 
         else if(isset($_SESSION['toastr']['message_type']) && $_SESSION['toastr']['message_type'] == "success"){
@@ -177,8 +183,42 @@
         }
         unset($_SESSION['toastr']['message']); 
       }
-      else if(isset($_SESSION['error'])){
-
+      else if(isset($_SESSION['toastr'])){
+      ?>
+        Toast.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: '<?=$_SESSION['toastr']?>',
+          showConfirmButton: false,
+          timer: 2500
+        })
+      <?php
+      }
+      else if(isset($_SESSION['update_status'])){
+        if(isset($_SESSION['type']) && $_SESSION['type'] == "error"){
+          ?>
+            Toast.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: '<?=$_SESSION['update_status']?>',
+                showConfirmButton: false,
+                timer: 2500
+              })
+          <?php
+        }
+        else if(isset($_SESSION['type']) && $_SESSION['type'] == "success"){
+          ?>
+            Toast.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: '<?=$_SESSION['update_status']?>',
+              showConfirmButton: false,
+              timer: 2500
+            })
+          <?php
+        }
+        unset($_SESSION['update_status']);
+        unset($_SESSION['type']);
       }
     ?>
 </script>
@@ -205,12 +245,12 @@
 
 <script>
   // UPDATE COMMENT STATUS
-  var Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000
-  });
+  // var Toast = Swal.mixin({
+  //   toast: true,
+  //   position: 'top-end',
+  //   showConfirmButton: false,
+  //   timer: 3000
+  // });
   
   function updateComment(cmt_id,is_parent){
     var status_up = document.getElementById('status').value;
@@ -242,6 +282,12 @@
   }
 </script>
 
+  <!-- CKEDITOR PLUGIN -->
+  <script src="plugins/ckeditor/ckeditor.js"></script>
+
+  <script>
+      CKEDITOR.replace('ckeditor');
+  </script>
 
 
 <?php

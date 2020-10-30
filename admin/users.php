@@ -47,72 +47,40 @@
                           <h3 class="card-title">Manage All Users</h3>
                         </div>
                         <div class="card-body" style="display: block;">
-                          
-                          <table class="table">
-                            <thead class="thead-dark">
-                              <tr>
-                                <th scope="col">#Sl.</th>
-                                <th scope="col">Image</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Address</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">User Role</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Join Date</th>
-                                <th scope="col">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $total_rows = $db->query("SELECT * FROM users")->num_rows;
+                        <?php
+                          $total_rows = $db->query("SELECT * FROM users")->num_rows;
 
-                                    $current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+                          $current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 
-                                    $rows_per_page = 10;
+                          $rows_per_page = 10;
 
-                                    if($statement = $db->prepare("SELECT * FROM users LIMIT ?,?") ){
-                                        $cal_page = ($current_page - 1) * $rows_per_page;
-                                        $statement->bind_param("ii",$cal_page,$rows_per_page);
-                                        $statement->execute();
-                                        $allUsers = $statement->get_result();
-                                    }
-                                ?>
-                              <?php
-                                $i = 0;
-                                while( $row = mysqli_fetch_assoc($allUsers) ){
-                                  $id         = $row['id'];
-                                  $name       = $row['name'];
-                                  $email      = $row['email'];
-                                  $password   = $row['password'];
-                                  $address    = $row['address'];
-                                  $phone      = $row['phone'];
-                                  $role       = $row['role'];
-                                  $status     = $row['status'];
-                                  $image      = $row['image'];
-                                  $join_date  = $row['join_date'];
-                                  $i++;
-                              ?>
-
-                                  <tr>
-                                <th scope="row"><?php echo $i; ?></th>
-                                <td>
-                                  <?php
-                                    if ( !empty($image) ){ ?>
-                                      <img src="img/users/<?php echo $image; ?>" class="table-img">
-                                    <?php }
-                                    else{ ?>
-                                      <img src="img/users/default.png" class="table-img">
-                                    <?php }
-                                  ?>
-
-                                  
-                                </td>
-                                <td><?php echo $name; ?></td>
-                                <td><?php echo $email; ?></td>
-                                <td><?php echo $address; ?></td>
-                                <td><?php echo $phone; ?></td>
-                                <td>
+                          if($statement = $db->prepare("SELECT * FROM users LIMIT ?,?") ){
+                              $cal_page = ($current_page - 1) * $rows_per_page;
+                              $statement->bind_param("ii",$cal_page,$rows_per_page);
+                              $statement->execute();
+                              $allUsers = $statement->get_result();
+                          }
+                        ?>
+                        
+                          <div class="row">
+                            <?php
+                              $i = 0;
+                              while( $row = mysqli_fetch_assoc($allUsers) ){
+                                $id         = $row['id'];
+                                $name       = $row['name'];
+                                $email      = $row['email'];
+                                $password   = $row['password'];
+                                $address    = $row['address'];
+                                $phone      = $row['phone'];
+                                $role       = $row['role'];
+                                $status     = $row['status'];
+                                $image      = $row['image'];
+                                $join_date  = $row['join_date'];
+                                $i++;
+                            ?>
+                            <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch ">
+                              <div class="card bg-light w-100">
+                                <div class="card-header text-muted border-bottom-0">
                                   <?php
                                     if ( $role == 1 ){ ?>
                                       <span class="badge badge-success">Super Admin</span>
@@ -121,43 +89,55 @@
                                       <span class="badge badge-primary">Editor</span>
                                     <?php }
                                   ?>
-                                </td>
-                                <td>
-                                  <?php
-                                    if ( $status == 0 ){ ?>
-                                      <span class="badge badge-danger">Inactive</span>
-                                    <?php }
-                                    else if ( $status == 1 ){ ?>
-                                      <span class="badge badge-success">Active</span>
-                                    <?php }
-                                  ?>
-                                </td>
-                                <td><?php echo $join_date; ?></td>
-                                <td>
-                                  <a class="btn btn-info btn-sm" href="users.php?do=Edit&edit=<?php echo $id; ?>">
-                                      <i class="fas fa-pencil-alt">
-                                      </i>
-                                      Edit
-                                  </a>
+                                </div>
+                                <div class="card-body pt-0">
+                                  <div class="row">
+                                    <div class="col-7">
+                                      <h2 class="lead"><b><?=$name?></b></h2>
+                                      <p class="text-muted text-sm"><b>Email: </b> <?=$email?> </p>
+                                      <ul class="ml-4 mb-0 fa-ul text-muted">
+                                        <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Address: <?=$address?></li>
+                                        <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: <?=$phone?></li>
+                                      </ul>
+                                    </div>
+                                    <div class="col-5 text-center">
+                                      <?php
+                                        if ( !empty($image) ){ ?>
+                                          <img src="img/users/<?php echo $image; ?>" class="img-circle img-fluid">
+                                        <?php }
+                                        else{ ?>
+                                          <img src="img/users/default.png" class="img-circle img-fluid">
+                                        <?php }
+                                      ?>
+                                      <!-- <img src="../../dist/img/user1-128x128.jpg" alt="user-avatar" class="img-circle img-fluid"> -->
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="card-footer">
+                                  <div class="text-right">
+                                    <a class="btn btn-info btn-sm" href="users.php?do=Edit&edit=<?php echo $id; ?>">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                    </a>
 
 
-                                  <?php
-                                    if ( $role == 1 ){
+                                    <?php
+                                      if ( $role == 1 ){
 
-                                    }
-                                    else if ( $role == 2 ){ ?>
-                                      <a class="btn btn-danger btn-sm" href="" data-toggle="modal" data-target="#delete<?php echo $id; ?>">
-                                      <i class="fas fa-trash">
-                                      </i>
-                                      Delete
-                                  </a>
-                                    <?php }
-                                  ?>
-                                  
-
-
-                                </td>
-                              </tr>
+                                      }
+                                      else if ( $role == 2 ){ ?>
+                                        <a class="btn btn-danger btn-sm" href="" data-toggle="modal" data-target="#delete<?php echo $id; ?>">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                        Delete
+                                    </a>
+                                      <?php }
+                                    ?>
+                                    <a href="profile.php?do=View&view=<?php echo $id; ?>" class="btn btn-sm btn-primary">
+                                      <i class="fas fa-user"></i> View Profile
+                                    </a>
+                                  </div>
                                   <!-- Delete Modal -->
                                   <div class="modal fade" id="delete<?php echo $id; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -179,13 +159,14 @@
                                       </div>
                                     </div>
                                   </div>
-
-                              <?php  }
-                              ?>
-                              
-                              
-                            </tbody>
-                          </table>
+                                </div>
+                              </div>
+                            </div>
+                          <?php
+                            }
+                          ?>
+                          </div>
+                          
 
                         </div>
                       </div>

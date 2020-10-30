@@ -33,7 +33,12 @@
         <div class="row">
           <div class="col-md-3">
           <?php
-            $getUserData = "SELECT * FROM users WHERE id = '{$_SESSION['id']}'";
+            if(isset($_GET['do']) && isset($_GET['view'])){
+              $getUserData = "SELECT * FROM users WHERE id = '{$_GET['view']}'";
+            }
+            else{
+              $getUserData = "SELECT * FROM users WHERE id = '{$_SESSION['id']}'";
+            }
             $resUser     = mysqli_query($db,$getUserData);
             while($row = mysqli_fetch_assoc($resUser)){
               $name       = $row['name'];
@@ -153,7 +158,12 @@
                     <!-- Post -->
                     
                       <?php
-                        $getPostsSql = "SELECT * FROM post WHERE author_id = '{$_SESSION['id']}'";
+                        if(isset($_GET['do']) && isset($_GET['view'])){
+                          $getPostsSql = "SELECT * FROM post WHERE author_id = '{$_GET['view']}'";
+                        }
+                        else{
+                          $getPostsSql = "SELECT * FROM post WHERE author_id = '{$_SESSION['id']}'";
+                        }
                         $resPOSTS    = mysqli_query($db,$getPostsSql);
                         if(mysqli_num_rows($resPOSTS) == 0){
                       ?>
@@ -224,10 +234,22 @@
                     <div class="timeline timeline-inverse">
                       <!-- timeline time label -->
                       <?php
-                        $getComments  = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
+                        if(isset($_GET['do']) && isset($_GET['view'])){
+                          $getComments = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
                                         comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
                                         post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
-                                        inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
+                                        inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_GET['view']}' ORDER BY comments.cmt_date DESC";
+                        }
+                        else{
+                          $getComments = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
+                                          comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
+                                          post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
+                                          inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
+                        }
+                        // $getComments  = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
+                        //                 comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
+                        //                 post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
+                        //                 inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
                         $resPost      = mysqli_query($db,$getComments);
                         $firstPostDate = "";
                         
@@ -373,7 +395,18 @@
                             <label>
                               <input type="checkbox" name="terms"> I agree to the <a href="#">terms and conditions</a>
                             </label>
-                            <input type="hidden" name="userID" id="user_id" value="<?=$_SESSION['id']?>">
+                            <?php
+                              if(isset($_GET['view'])){
+                            ?>
+                                  <input type="hidden" name="userID" id="user_id" value="<?=$_GET['view']?>">
+                            <?php
+                              }else{
+                            ?>
+                                  <input type="hidden" name="userID" id="user_id" value="<?=$_SESSION['id']?>">
+                            <?php
+                              }
+                            ?>
+                            
                           </div>
                         </div>
                       </div>
