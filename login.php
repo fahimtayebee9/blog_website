@@ -65,8 +65,9 @@
     if( isset($_GET['action']) && $_GET['action'] == "login"){
         unset($_SESSION['timeout']);
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            $email = $_REQUEST['email'];
-            $password = $_REQUEST['password'];
+            $email    = $_REQUEST['email'];
+            $password = sha1($_REQUEST['password']);
+            
             $loginSql = "SELECT * FROM visitor WHERE email  = '$email' AND password = '$password' AND status=1";
             $resVisitor = mysqli_query($db,$loginSql);
             if(mysqli_num_rows($resVisitor) > 0){
@@ -106,7 +107,7 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
             $email      = $_REQUEST['email'];
-            $password   = $_REQUEST['password'];
+            $password   = sha1($_REQUEST['password']);
             $name       = $_REQUEST['name'];
 
             // PREPARE IMAGE

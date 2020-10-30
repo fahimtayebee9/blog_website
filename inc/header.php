@@ -70,6 +70,13 @@
 
     <!-- swiper CSS -->
     <link rel="stylesheet" type="text/css" href="assets/css/swiper.min.css">
+
+    <style>
+        .swiper-container{
+            margin: 0px!important;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -77,8 +84,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <nav class="navbar navbar-expand-lg navbar-light  " >
-                        <div class="collapse navbar-collapse justify-content-start w-50" id="navbarNavDropdown">
+                    <nav class="navbar navbar-expand-lg navbar-light m-0 " >
+                        <div class="collapse navbar-collapse justify-content-start w-50 m-0" id="navbarNavDropdown">
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     <?php
@@ -89,7 +96,6 @@
                                             <div class="swiper-slide w-100">
                                                 <a href="single.php?post=<?=$rowPostx['post_id']?>" class="text-left"><?=substr($rowPostx['title'],0,50);?></a>
                                             </div>
-                                            <span>|</span>
                                     <?php
                                         }
                                     ?>
