@@ -178,7 +178,7 @@
                           <div class="user-block">
                             <img class="img-circle img-bordered-sm" src="img/post/<?=$rowPs['image']?>" alt="user image">
                             <span class="username">
-                              <a href="#"><?=$rowPs['title']?></a>
+                              <a href="post.php?do=Edit&edit=<?=$rowPs['post_id']?>"><?=$rowPs['title']?></a>
                               <!-- <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a> -->
                             </span>
                             <?php
@@ -210,7 +210,7 @@
                         <!-- <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a> -->
                         <!-- <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a> -->
                         <span class="float-right">
-                          <a href="#" class="link-black text-sm">
+                          <a href="comments.php?do=Manage" class="link-black text-sm">
                             <?php
                               $total_comment = $db->query("SELECT * FROM comments WHERE post_id = '{$rowPs['post_id']}'")->num_rows;
                             ?>
@@ -238,30 +238,33 @@
                           $getComments = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
                                         comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
                                         post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
-                                        inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_GET['view']}' ORDER BY comments.cmt_date DESC";
-                        }
+                                        inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_GET['view']}' 
+                                        GROUP BY comments.cmt_date ORDER BY comments.cmt_date DESC";
+                          // $getComments = "SELECT * FROM post WHERE author_id = '{$_GET['view']}' ORDER BY post_date DESC";  
+                      }
                         else{
+                          // $getComments = "SELECT * FROM post WHERE author_id = '{$_SESSION['id']}' ORDER BY post_date DESC";
                           $getComments = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
                                           comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
                                           post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
-                                          inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
+                                          inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' 
+                                          GROUP BY comments.cmt_date ORDER BY comments.cmt_date DESC";
                         }
-                        // $getComments  = "SELECT comments.cmt_id, comments.comments,comments.post_id as cmt_postId,comments.visitor_id, comments.cmt_date,
-                        //                 comments.is_parent,comments.status as cmt_status, comments.new_status as cmt_newStatus, post.title,
-                        //                 post.description, post.category_id, post.post_date, post.meta, post.status, post.author_id FROM comments 
-                        //                 inner join post on comments.post_id = post.post_id WHERE post.author_id = '{$_SESSION['id']}' ORDER BY comments.cmt_date DESC";
+                        
                         $resPost      = mysqli_query($db,$getComments);
-                        $firstPostDate = "";
                         
                         if(mysqli_num_rows($resPost) == 0){
                           ?>
-                            <div class="alert alert-warning">
+                            <div class="alert alert-info">
                               Nothing to show.
                             </div>
                           <?php
                         }
                         else{
+                          $ttl = 0;
+                          $allPostDates = [];
                           while($rowPost = mysqli_fetch_assoc($resPost)){
+                            // $post_idIn      = $rowPost['post_id'];
                             $title          = $rowPost['title'];
                             $description    = $rowPost['description'];
                             $category_id    = $rowPost['category_id'];
@@ -276,72 +279,95 @@
                             $cmt_date       = $rowPost['cmt_date'];
                             $cmt_newStatus  = $rowPost['cmt_newStatus'];
                             $cmt_status     = $rowPost['cmt_status'];
-                            $cmtDateArr     = explode(' ',$firstPostDate);
-                            $i = 0;
-                      ?>
-                            <div class="time-label">
-                              <span class="bg-info">
-                                <?php 
-                                    $dateArea = explode(' ',$cmt_date);
-                                    $date_arr = explode('-',$dateArea[0]);
-                                    echo $date_arr[2] . " " . substr(date('F', mktime(0, 0, 0, $date_arr[1], 10)),0,3) .", " . $date_arr[0];
-                                ?>
-                              </span>
-                            </div>
-                      <?php
-                            $getDataByDate = "SELECT * FROM comments WHERE cmt_date LIKE '$cmt_date%'";
-                            $resData       = mysqli_query($db,$getDataByDate);
-                            while($rowDate = mysqli_fetch_assoc($resData)){
-                              $cmt_id_byDate         = $rowDate['cmt_id'];
-                              $comments_byDate       = $rowDate['comments'];
-                              $visitor_id_byDate     = $rowDate['visitor_id'];
-                              $is_parent_byDate      = $rowDate['is_parent'];
-                              $cmt_date_byDate       = $rowDate['cmt_date'];
-                              $cmt_newStatus_byDate  = $rowDate['new_status'];
-                              $cmt_status_byDate     = $rowDate['status'];
-                              
-                              $getVisitorInfoSql = "SELECT * FROM visitor WHERE visitor_id = '$visitor_id_byDate'";
-                              $resVisitor        = mysqli_query($db,$getVisitorInfoSql);
-                              while($rowVisitor = mysqli_fetch_assoc($resVisitor)){
-                                $vs_name = $rowVisitor['name'];
+                            $allPostDates[] = $rowPost;
+                            
+                            // $allCommentDates[sizeof($allCommentDates)-1] != $next_cmtDate && 
+                            $ttl++;
+                          }
+
+                          $count = 0;
+                          $disticnt_date = [];
+                          while($count < sizeof($allPostDates)){
+                            $next = $count + 1;
+                            if( $next == sizeof($allPostDates) ){
+                              $disticnt_date[] = date("d M, Y", strtotime(explode(' ',$allPostDates[$count]['cmt_date'])[0]));
+                            }
+                            else{
+                              if( date("d M, Y", strtotime(explode(' ',$allPostDates[$count]['cmt_date'])[0])) !=  date("d M, Y", strtotime(explode(' ',$allPostDates[$count + 1]['cmt_date'])[0]))){
+                                $disticnt_date[] = date("d M, Y", strtotime(explode(' ',$allPostDates[$count]['cmt_date'])[0]));
                               }
-                          ?>
-                                <!-- timeline item -->
-                                <div>
-                                  <i class="fas fa-comments bg-warning"></i>
+                            }
+                            $count++;
+                          }
 
-                                  <div class="timeline-item">
-                                    <span class="time"><i class="far fa-clock"></i>
-                                      <?php
-                                        $timeDiff = time() - strtotime($cmt_date_byDate) ;
-                                        $hours    = floor($timeDiff / (60*60)); 
-                                        $minutes  = floor($hours/60);
-                                        if($minutes > 0 && $hours < 1){
-                                            echo $minutes . " Mins ago";
-                                        }
-                                        else if($hours < 24 && $hours >= 1){
-                                            echo $hours . " hours ago";
-                                        }
-                                        else if($hours > 24){
-                                            echo floor($hours/24) . " Days ago"; 
-                                        }
-                                      ?>
-                                    </span>
+                          $count = 0;
+                          while($count < sizeof($disticnt_date)){
+                            $dateYMD = date("Y-m-d",strtotime($disticnt_date[$count]));
+                            ?>
+                              <div class="time-label">
+                                <span class="bg-info">
+                                  <?php 
+                                      echo $disticnt_date[$count];
+                                  ?>
+                                </span>
+                              </div>
+                            <?php
+                              $getDataByDate = "SELECT * FROM comments WHERE cmt_date LIKE '$dateYMD%' ORDER BY cmt_date DESC";
+                              $resData       = mysqli_query($db,$getDataByDate);
+                              
+                              while($rowDate = mysqli_fetch_assoc($resData)){
+                                $cmt_id_byDate         = $rowDate['cmt_id'];
+                                $comments_byDate       = $rowDate['comments'];
+                                $visitor_id_byDate     = $rowDate['visitor_id'];
+                                $is_parent_byDate      = $rowDate['is_parent'];
+                                $cmt_date_byDate       = $rowDate['cmt_date'];
+                                $cmt_newStatus_byDate  = $rowDate['new_status'];
+                                $cmt_status_byDate     = $rowDate['status'];
+                                
+                                $getVisitorInfoSql = "SELECT * FROM visitor WHERE visitor_id = '$visitor_id_byDate'";
+                                $resVisitor        = mysqli_query($db,$getVisitorInfoSql);
+                                while($rowVisitor = mysqli_fetch_assoc($resVisitor)){
+                                  $vs_name = $rowVisitor['name'];
+                                }
+                                ?>
+                                  <!-- timeline item -->
+                                  <div>
+                                    <i class="fas fa-comments bg-warning"></i>
 
-                                    <h3 class="timeline-header"><a href="#"><?=$vs_name?></a> commented on your post</h3>
+                                    <div class="timeline-item">
+                                      <span class="time"><i class="far fa-clock"></i>
+                                        <?php
+                                          $timeDiff = time() - strtotime($cmt_date_byDate) ;
+                                          $hours    = floor($timeDiff / (60*60)); 
+                                          $minutes  = floor($hours/60);
+                                          if($minutes > 0 && $hours < 1){
+                                              echo $minutes . " Mins ago";
+                                          }
+                                          else if($hours < 24 && $hours >= 1){
+                                              echo $hours . " hours ago";
+                                          }
+                                          else if($hours > 24){
+                                              echo floor($hours/24) . " Days ago"; 
+                                          }
+                                          // echo $prev_cmtDate;
+                                        ?>
+                                        
+                                      </span>
 
-                                    <div class="timeline-body">
-                                      <?=$comments?>
-                                    </div>
-                                    <div class="timeline-footer">
-                                      <a href="" class="btn btn-secondary btn-flat btn-sm">View comment</a>
+                                      <h3 class="timeline-header"><a href="#"><?=$vs_name?></a> commented on your post</h3>
+
+                                      <div class="timeline-body">
+                                        <?=$comments_byDate?>
+                                      </div>
+                                      <div class="timeline-footer">
+                                        <a href="comments.php?edit=<?=$cmt_id_byDate?>" class="btn btn-secondary btn-flat btn-sm">View comment</a>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                                <!-- END timeline item -->
-                          <?php
-
-                            }
+                                  <!-- END timeline item -->
+                                <?php
+                              }
+                              $count++;
                           }
                         }
                       ?>

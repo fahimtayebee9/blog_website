@@ -52,7 +52,7 @@
 
                           $current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 
-                          $rows_per_page = 10;
+                          $rows_per_page = 6;
 
                           if($statement = $db->prepare("SELECT * FROM users LIMIT ?,?") ){
                               $cal_page = ($current_page - 1) * $rows_per_page;
@@ -206,7 +206,7 @@
                               <!-- PREVIOUS BUTTON -->
                               <?php if($current_page > 1) : ?>
                                   <li class="page-item ">
-                                      <a class="page-link" href="index.php?page=<?=($current_page-1)?>" tabindex="-1" aria-disabled="true">&laquo;</a>
+                                      <a class="page-link" href="users.php?page=<?=($current_page-1)?>" tabindex="-1" aria-disabled="true">&laquo;</a>
                                   </li>
                               <?php else : ?>
                                   <li class="page-item disabled">
@@ -215,27 +215,27 @@
                               <?php endif;?>
 
                               <?php if($current_page - 2 > 0) : ?>
-                                  <li class="page-item"><a class="page-link" href="index.php?page=<?=($current_page - 2 )?>"><?=($current_page - 2 )?></a></li>
+                                  <li class="page-item"><a class="page-link" href="users.php?page=<?=($current_page - 2 )?>"><?=($current_page - 2 )?></a></li>
                               <?php endif;?>
 
                               <?php if($current_page - 1 > 0) : ?>
-                                  <li class="page-item"><a class="page-link" href="index.php?page=<?=($current_page - 1 )?>"><?=($current_page - 1 )?></a></li>
+                                  <li class="page-item"><a class="page-link" href="users.php?page=<?=($current_page - 1 )?>"><?=($current_page - 1 )?></a></li>
                               <?php endif;?>
 
-                              <li class="page-item active"><a class="page-link" href="index.php?page=<?=$current_page?>"><?=$current_page?></a></li>
+                              <li class="page-item active"><a class="page-link" href="users.php?page=<?=$current_page?>"><?=$current_page?></a></li>
 
                               <?php if($current_page + 1 < ceil($total_rows / $rows_per_page) + 1 ) : ?>
-                                  <li class="page-item"><a class="page-link" href="index.php?page=<?=($current_page + 1 )?>"><?=($current_page + 1 )?></a></li>
+                                  <li class="page-item"><a class="page-link" href="users.php?page=<?=($current_page + 1 )?>"><?=($current_page + 1 )?></a></li>
                               <?php endif;?>
 
                               <?php if($current_page + 2 < ceil($total_rows / $rows_per_page) + 1 ) : ?>
-                                  <li class="page-item"><a class="page-link" href="index.php?page=<?=($current_page + 2 )?>"><?=($current_page + 2 )?></a></li>
+                                  <li class="page-item"><a class="page-link" href="users.php?page=<?=($current_page + 2 )?>"><?=($current_page + 2 )?></a></li>
                               <?php endif;?>
                               
                               <!-- NEXT BUTTON -->
                               <?php if($current_page < ceil($total_rows / $rows_per_page)) : ?>
                                   <li class="page-item ">
-                                      <a class="page-link" href="index.php?page=<?=($current_page + 1 )?>" tabindex="-1" aria-disabled="true">&raquo;</a>
+                                      <a class="page-link" href="users.php?page=<?=($current_page + 1 )?>" tabindex="-1" aria-disabled="true">&raquo;</a>
                                   </li>
                               <?php else : ?>
                                   <li class="page-item disabled">
@@ -593,7 +593,7 @@
                             // Upload the Image to its own Folder Location
                             move_uploaded_file($imageTmp, "img\users\\" . $image );
 
-                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
+                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status', image='$image',new_user = '2' WHERE id = '$updateUserID' ";
 
                             $addUser = mysqli_query($db, $sql);
 
@@ -620,7 +620,7 @@
                             // Upload the Image to its own Folder Location
                             move_uploaded_file($imageTmp, "img\users\\" . $image );
 
-                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status', image='$image' WHERE id = '$updateUserID' ";
+                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status', image='$image', new_user = '2' WHERE id = '$updateUserID' ";
 
                             $addUser = mysqli_query($db, $sql);
 
@@ -636,7 +636,7 @@
                             // Encrypted Password
                             $hassedPass = sha1($password);
 
-                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
+                            $sql = "UPDATE users SET name='$name', email='$email', password='$hassedPass', address='$address', phone='$phone', role='$role', status='$status',new_user = '2' WHERE id = '$updateUserID' ";
 
                             $addUser = mysqli_query($db, $sql);
 
@@ -649,7 +649,7 @@
                           }
                           // No Password and Image Update
                           else{
-                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status' WHERE id = '$updateUserID' ";
+                            $sql = "UPDATE users SET name='$name', email='$email', address='$address', phone='$phone', role='$role', status='$status',new_user = '2' WHERE id = '$updateUserID' ";
 
                             $addUser = mysqli_query($db, $sql);
 
