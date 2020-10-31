@@ -62,14 +62,25 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                <?php
+                  $getUsers = mysqli_query($db,"SELECT * FROM users");
+                  $total_postsCount = 0;
+                  $total_users = mysqli_num_rows($getUsers);
+                  while($rowuser = mysqli_fetch_assoc($getUsers)){
+                    $users_id = $rowuser['id'];
+                    $getPosts_count = $db->query("SELECT * FROM post WHERE author_id = '$users_id'")->num_rows;
+                    $total_postsCount += $getPosts_count; 
+                  }
+                  $postsPerUser = ($total_postsCount/$total_users)*100;
+                ?>
+                <h3><?=number_format($postsPerUser,2)?><sup style="font-size: 20px">%</sup></h3>
 
-                <p>Bounce Rate</p>
+                <p>Posts Per Users</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="post.php?do=Manage" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->

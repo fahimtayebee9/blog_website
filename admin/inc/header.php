@@ -8,6 +8,7 @@
   if ( empty( $_SESSION['email'] ) || empty( $_SESSION['password'] ) ){
     header("Location: index.php");
   }
+  
 ?>
 
 <!DOCTYPE html>
