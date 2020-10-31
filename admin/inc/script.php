@@ -99,7 +99,7 @@
   <script>
       var Toast = Swal.mixin({
         toast: true,
-        position: 'top-end',
+        // position: 'top-end',
         showConfirmButton: false,
         timer: 3500
       });
@@ -195,7 +195,7 @@
           if(isset($_SESSION['type']) && $_SESSION['type'] == "error"){
             ?>
               Toast.fire({
-                  position: 'top-end',
+                  position: 'top',
                   icon: 'error',
                   title: '<?=$_SESSION['update_status']?>',
                   showConfirmButton: false,
@@ -206,7 +206,7 @@
           else if(isset($_SESSION['type']) && $_SESSION['type'] == "success"){
             ?>
               Toast.fire({
-                position: 'top-end',
+                position: 'top',
                 icon: 'success',
                 title: '<?=$_SESSION['update_status']?>',
                 showConfirmButton: false,
@@ -250,7 +250,7 @@
           if(this.readyState == 4 && this.status == 200){
               if(this.responseText != ""){
                 Toast.fire({
-                  position: 'top-end',
+                  position: 'center-start',
                   icon: 'success',
                   title: 'Comment Status Has been Updated',
                   showConfirmButton: false,
@@ -273,7 +273,7 @@
   <script>
     var Toast = Swal.mixin({
       toast: true,
-      position: 'top-end',
+      position: 'center-start',
       showConfirmButton: false,
       timer: 3500
     });
@@ -298,7 +298,7 @@
             if(this.readyState == 4 && this.status == 200){
               if(this.responseText != ""){
                 Toast.fire({
-                  position: 'top-end',
+                  position: 'center-start',
                   icon: 'success',
                   title: 'Your Post has been deleted.',
                   showConfirmButton: false,
@@ -311,7 +311,7 @@
                   'error'
                 )
               }
-              setTimeout(loadPage, 2500);
+              setTimeout(loadPage, 2400);
             }	
           }
         }

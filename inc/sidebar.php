@@ -89,6 +89,9 @@
                                         $author_name = $row['name'];
                                         $author_image = $row['image'];
                                     }
+                                    $total_comment  = $db->query("SELECT `cmt_id` as cmt_ID, `comments` as comment_desc, `post_id` as post_ID, 
+                                                    `visitor_id` as visitor_ID, `is_parent` as parent, `status` as status_cmt, `cmt_date` as cmt_Date 
+                                                    FROM comments WHERE post_id = $post_id AND status = 1 ORDER BY cmt_id DESC")->num_rows;
                             ?>
                                 <!-- Recent Post Item Content Start -->
                                 <div class="recent-post-item">
@@ -101,8 +104,8 @@
                                         <div class="col-md-8 no-padding">
                                             <h5><a class="recent-title" href="single.php?post=<?php echo $post_id; ?>"><?=$title;?></a></h5>
                                             <ul>
-                                                <li><i class="fa fa-clock-o"></i><?=$post_date;?></li>
-                                                <li><i class="fa fa-comment-o"></i>15</li>
+                                                <li><i class="fa fa-clock-o"></i><?=date("d M, Y",strtotime($post_date));?></li>
+                                                <li><i class="fa fa-comment-o"></i><?=$total_comment?></li>
                                             </ul>
                                         </div>
                                     </div>
