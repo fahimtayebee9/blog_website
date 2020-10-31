@@ -70,7 +70,7 @@
                                 <!-- Blog Banner Image -->
                                 <div class="blog-banner">
                                     <a href="single.php?post=<?php echo $post_id; ?>">
-                                        <img src="admin/img/post/<?php echo $image; ?>">
+                                        <img class="w-100 img-fluid" src="admin/img/post/<?php echo $image; ?>">
                                         <!-- Post Category Names -->
                                         <div class="blog-category-name">
                                             <?php

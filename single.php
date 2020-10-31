@@ -149,13 +149,13 @@
                             <div class="row pt-4">
                                 <div class="col-md-8 meta-tags">
                                     <h3 class="">Related Tags</h3>
-                                        <ul class="mt-3 d-flex justify-content-between">
+                                        <ul class="mt-3 d-flex align-items-center">
                                             <?php
                                                 $metaARR = explode(',',$meta);
 
                                                 foreach($metaARR as $mt){
                                             ?>
-                                                    <li>
+                                                    <li class="mr-3">
                                                         <!-- <span> -->
                                                             <a class="text-light text-decoration-none btn-main" href="category.php?meta=<?php echo $mt; ?>"><?php echo strtoupper($mt); ?></a>
                                                         <!-- </span> -->

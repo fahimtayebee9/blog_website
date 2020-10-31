@@ -111,29 +111,118 @@
       </li>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
+        <?php
+          $new_posts = $db->query("SELECT * FROM post WHERE newPost = 1")->num_rows;
+          $new_users = $db->query("SELECT * FROM users WHERE new_user = 1")->num_rows;
+          $new_visitor = $db->query("SELECT * FROM visitor WHERE id_status = 1")->num_rows;
+          $total_newItem = $new_posts + $new_users + $new_visitor;
+        ?>
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
+          <span class="badge badge-warning navbar-badge">
+            <?php
+              if($total_newItem != 0){
+                echo $total_newItem;
+              }    
+              else {
+                echo 0;
+              }
+            ?>
+          </span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
+          <span class="dropdown-item dropdown-header">
+            <?php
+              if($total_newItem != 0){
+                echo $total_newItem;
+              }    
+              else {
+                echo 0;
+              }
+            ?> New Notifications</span>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+          <?php
+            $lastuserSQL = "SELECT * FROM users ORDER BY id DESC LIMIT 1";
+            $resUser     = mysqli_query($db,$lastuserSQL);
+            while($rowUser = mysqli_fetch_assoc($resUser)){
+              $join_date = $rowUser['join_date'];
+            }
+            $time_hr = floor( ( time() - strtotime( $join_date ) ) / (60 * 60) );
+            // $hours    = floor($timeDiff / (60*60)); 
+            $minutes  = floor($time_hr/60);
+            $seconds  = floor($minutes / 60);
+            $time_str = "";
+            if($minutes > 0 && $time_hr < 1){
+              $time_str =  $minutes . " Minutes";
+            }
+            else if($time_hr < 24 && $time_hr >= 1){
+              $time_str =  $time_hr . " hours";
+            }
+            else if($time_hr > 24){
+              $time_str =  floor($time_hr/24) . " Days"; 
+            }
+          ?>
+          <a href="users.php?do=Manage" class="dropdown-item">
+            <i class="fas fa-user-plus mr-2"></i> 
+            <?php
+              if($new_users != 0){
+                echo $new_users;
+              }    
+              else {
+                echo 0;
+              }
+            ?> new users
+            <!-- <span class="float-right text-muted text-sm"><?//=$time_str?></span> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
+          <?php
+            $lastPostSQL = "SELECT * FROM post ORDER BY post_id DESC LIMIT 1";
+            $resPost     = mysqli_query($db,$lastPostSQL);
+            while($rowPost = mysqli_fetch_assoc($resPost)){
+              $post_date = $rowPost['post_date'];
+            }
+            $time_hr_post = floor( ( time() - strtotime( $post_date ) ) / (60 * 60) );
+            // $hours    = floor($timeDiff / (60*60)); 
+            $minutes_post  = floor($time_hr_post /60);
+            $seconds_post  = floor($minutes_post / 60);
+            $time_str_post = "";
+            if($minutes_post > 0 && $time_hr_post < 1){
+              $time_str_post =  $minutes_post . " Minutes";
+            }
+            else if($time_hr < 24 && $time_hr_post >= 1){
+              $time_str_post =  $time_hr_post . " hours";
+            }
+            else if($time_hr_post > 24){
+              $time_str_post =  floor($time_hr_post/24) . " Days"; 
+            }
+          ?>
+          <a href="post.php?do=Manage" class="dropdown-item">
+            <i class="fas fa-clone mr-2"></i> 
+            <?php
+              if($new_posts != 0){
+                echo $new_posts;
+              }    
+              else {
+                echo 0;
+              }
+            ?> new posts
+            <!-- <span class="float-right text-muted text-sm"><?//=$time_str_post?></span> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
+          <a href="visitor.php?do=Manage" class="dropdown-item">
+            <i class="fas fa-user mr-2"></i> 
+            <?php
+              if($new_visitor != 0){
+                echo $new_visitor;
+              }    
+              else {
+                echo 0;
+              }
+            ?> new visitors
+            <!-- <span class="float-right text-muted text-sm"><?=$time_str_vs?></span> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+          <!-- <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a> -->
         </div>
       </li>
       <li class="nav-item">

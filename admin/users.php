@@ -106,6 +106,24 @@
                                             echo $date_;
                                           ?>
                                         </li>
+                                        <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-user"></i></span> Status: 
+                                          <?php
+                                            if($status == 1){
+                                          ?>
+                                              <div class="badge badge-info">
+                                                ACTIVE
+                                              </div>
+                                          <?php
+                                            }
+                                            else{
+                                          ?>
+                                              <div class="badge badge-warning">
+                                                INACTIVE
+                                              </div>
+                                          <?php
+                                            }
+                                          ?>
+                                        </li>
                                       </ul>
                                     </div>
                                     <div class="col-5 text-center">
