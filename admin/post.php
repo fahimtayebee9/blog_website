@@ -45,7 +45,6 @@
                           <h3 class="card-title">Manage All Posts</h3>
                         </div>
                         <div class="card-body" style="display: block;">
-                          
                           <table class="table">
                             <thead class="thead-dark">
                               <tr>
@@ -71,16 +70,16 @@
                                 $allPosts = mysqli_query($db, $sql);
                                 $i = 0;
                                 while( $row = mysqli_fetch_assoc($allPosts) ){
-                                  $post_id             = $row['post_id'];
-                                  $title          = $row['title'];
-                                  $description    = $row['description'];
-                                  $image          = $row['image'];
-                                  $category_id    = $row['category_id'];
-                                  $author_id      = $row['author_id'];
-                                  $status         = $row['status'];
-                                  $meta           = $row['meta'];
-                                  $post_date      = $row['post_date'];
-                                  $i++;
+                                    $post_id        = $row['post_id'];
+                                    $title          = $row['title'];
+                                    $description    = $row['description'];
+                                    $image          = $row['image'];
+                                    $category_id    = $row['category_id'];
+                                    $author_id      = $row['author_id'];
+                                    $status         = $row['status'];
+                                    $meta           = $row['meta'];
+                                    $post_date      = $row['post_date'];
+                                    $i++;
                                   ?>
 
                                   <tr>
@@ -145,7 +144,7 @@
                                       </i>
                                       Edit
                                   </a>
-                                  <button class="btn btn-danger btn-sm" href="" data-toggle="" onclick="deletePost(<?=$post_id?>)" data-target="#delete<?php echo $post_id; ?>">
+                                  <button class="btn btn-danger btn-sm" onclick="deletePost(<?=$post_id?>)">
                                       <i class="fas fa-trash">
                                       </i>
                                       Delete
@@ -154,27 +153,6 @@
 
                                 </td>
                               </tr>
-              <!-- Delete Modal -->
-              <div class="modal fade" id="delete<?php echo $post_id; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Do you Confirm to delete this Post?</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="delete-option text-center">
-                          <ul>
-                            <li><a href="post.php?do=Delete&delete=<?php echo $post_id; ?>" class="btn btn-danger">Delete</a></li>
-                            <li><button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button></li>
-                          </ul>                        
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
                               <?php  }
                               ?>
@@ -397,7 +375,14 @@
                         $status         = $row['status'];
                         $meta           = $row['meta'];
                         $post_date      = $row['post_date'];
-                        ?>
+
+                        $getCatInfo = "SELECT * FROM category WHERE cat_id = '$category_id' OR sub_category='$category_id'";
+                        $resCat     = mysqli_query($db,$getCatInfo);
+                        while($rowCat = mysqli_fetch_assoc($resCat)){
+                          $cat_idFn = $rowCat['cat_id'];
+                          $parent_cat = $rowCat['sub_category'];
+                        }
+                      ?>
 
                         <div class="col-lg-12">
                           <div class="card">
@@ -417,15 +402,17 @@
                                     <div class="form-group">
                                       <label>Category</label>
                                       <select class="form-control" name="category_id" id="category_id_edit" onchange="getSubCategory()">
-                                        <option>Please select the category</option>
+                                        <option value="0">Please select the category</option>
                                         <?php
                                           $sql = "SELECT * FROM category WHERE status = 1 AND sub_category = 0 ORDER BY cat_name ASC";
                                           $readCat = mysqli_query($db, $sql);
                                           while( $row = mysqli_fetch_assoc($readCat) ){
                                             $cat_id   = $row['cat_id'];
                                             $cat_name = $row['cat_name'];
+                                            // $parent_cat = $row['sub_category'];
                                         ?>
-                                            <option value="<?php echo $cat_id; ?>"><?php echo $cat_name; ?></option>
+                                            <option value="<?=$cat_id;?>" 
+                                              <?php if($cat_id == $category_id){ echo "selected";}else if($parent_cat == $cat_id){ echo "selected";}?>><?=$cat_name;?></option>
                                         <?php  }
                                         ?>
                                       </select>
@@ -434,8 +421,19 @@
                                     <div class="form-group">
                                       <label>Sub Category</label>
                                       <select class="form-control" name="sub_id" id="sub_id" disabled>
-                                        <option value="0">Please select the category</option>
-                                        
+                                        <option value="0">Please Select The Sub Category</option>
+                                        <?php
+                                          $sql = "SELECT * FROM category WHERE status = 1 AND sub_category != 0 ORDER BY cat_name ASC";
+                                          $readCat = mysqli_query($db, $sql);
+                                          while( $row = mysqli_fetch_assoc($readCat) ){
+                                            $cat_id   = $row['cat_id'];
+                                            $cat_name = $row['cat_name'];
+                                            // $parent_cat = $row['sub_category'];
+                                        ?>
+                                            <option value="<?=$cat_id;?>" 
+                                              <?php if($cat_id == $category_id){ echo "selected";}else if($parent_cat == $cat_id){ echo "selected";}?>><?=$cat_name;?></option>
+                                        <?php  }
+                                        ?>
                                       </select>
                                     </div>  
                                 </div>
@@ -566,7 +564,7 @@
                           // Upload the Image to its own Folder Location
                           move_uploaded_file($imageTmp, "img\post\\" . $image );
 
-                          if(!empty($category_idSub)){
+                          if($category_idSub != 0){
                             $sql = "UPDATE post SET title='$title', description='$description', image='$image', category_id='$category_idSub', status='$status', meta='$metas' WHERE post_id = '$updatePostID' ";
                           }
                           else{
@@ -592,7 +590,7 @@
                         // Change the Password Only
                         else if ( empty($imageName) ){
 
-                          if(!empty($category_idSub)){
+                          if($category_idSub != 0){
                             $sql = "UPDATE post SET title='$title', description='$description', category_id='$category_idSub', status='$status', meta='$metas' WHERE post_id = '$updatePostID' ";
                           }
                           else{

@@ -195,7 +195,7 @@
           if(isset($_SESSION['type']) && $_SESSION['type'] == "error"){
             ?>
               Toast.fire({
-                  position: 'top',
+                  position: 'top-end',
                   icon: 'error',
                   title: '<?=$_SESSION['update_status']?>',
                   showConfirmButton: false,
@@ -206,7 +206,7 @@
           else if(isset($_SESSION['type']) && $_SESSION['type'] == "success"){
             ?>
               Toast.fire({
-                position: 'top',
+                position: 'top-end',
                 icon: 'success',
                 title: '<?=$_SESSION['update_status']?>',
                 showConfirmButton: false,
@@ -298,7 +298,7 @@
             if(this.readyState == 4 && this.status == 200){
               if(this.responseText != ""){
                 Toast.fire({
-                  position: 'center-start',
+                  position: 'top-end',
                   icon: 'success',
                   title: 'Your Post has been deleted.',
                   showConfirmButton: false,

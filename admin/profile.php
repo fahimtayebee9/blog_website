@@ -412,7 +412,7 @@
                       <div class="form-group row">
                         <label for="inputSkills" class="col-sm-2 col-form-label">Profile Image</label>
                         <div class="col-sm-10">
-                          <input type="file" class="form-control-file" name="image" id="profileImage" placeholder="Profile Image">
+                          <input type="file" class="custom-file-input opacity-5" style="opacity: 1!important;" name="image" id="profileImage">
                         </div>
                       </div>
                       <div class="form-group row">

@@ -99,22 +99,7 @@
                                                 <ul>
                                                     <li><i class="fa fa-calendar"></i>
                                                     <?php 
-                                                        $am_array = ["6","7","8","9","9:30","10","11"];
-                                                        $postDateArr = explode(' ', $post_date);
-                                                        $datePart_post = explode('-',$postDateArr[0]);
-                                                        $date_         = $datePart_post[2] . " " . substr(date('F', mktime(0, 0, 0, $datePart_post[1], 10)),0,3) . " ," . $datePart_post[0];
-                                                        // echo $date_;
-                                                        $postTime      = explode(':',date("h:i:s",strtotime('+24 hour',strtotime($postDateArr[1]))));
-                                                        if(in_array($postTime[0],$am_array)){
-                                                            $date_ .= " ".date("h:i A",strtotime('+24 hour',strtotime($postDateArr[1])));
-                                                        }
-                                                        else if(!in_array($postTime[0],$am_array)){
-                                                            $date_ .= " ".date("h:i A",strtotime('+12 hour',strtotime($postDateArr[1])));
-                                                        }
-                                                        else{
-                                                            $date_ .= " ".date("h:i A",strtotime('+24 hour',strtotime($postDateArr[1])));
-                                                        }
-                                                        echo $date_;
+                                                        echo date("d M, Y h:i A", strtotime($post_date));
                                                     ?>
                                                     </li>
                                                     <li>
