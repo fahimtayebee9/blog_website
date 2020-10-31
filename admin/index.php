@@ -19,15 +19,20 @@
   <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-  <!-- SWEET ALERT 2 -->
+  <!-- TOASTR -->
   <script src="../assets/js/toastr.min.js"></script>
   <link rel="stylesheet" href="../assets/css/toastr.min.css">
-<!-- jQuery -->
-<script src="plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
+  <!-- jQuery -->
+  <script src="plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="dist/js/adminlte.min.js"></script>
+
+  <!-- SWEET ALERT 2 -->
+  <link rel="stylesheet" href="plugins/sweetalert2/sweetalert2.min.css">  
+  <link href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -99,47 +104,19 @@
             $_SESSION['warning']      = "";
 
             if ( $email == $_SESSION['email'] && $hassed == $_SESSION['password'] && $_SESSION['status'] == 1 ){
+              $_SESSION['timestamp'] = time();
               header("Location: dashboard.php");
+              exit();
             }
             else if ( $email != $_SESSION['email'] && $hassed != $_SESSION['password'] && $_SESSION['status'] != 1 ){
               $_SESSION['danger'] = "Incorrect Information";
-              ?>
-                    <script>
-                      // toastr.options = {
-                      //   "closeButton": true,
-                      //   "debug": false,
-                      //   "newestOnTop": true,
-                      //   "progressBar": false,
-                      //   "positionClass": "toast-top-right",
-                      //   "preventDuplicates": false,
-                      //   "onclick": null,
-                      //   "showDuration": "300",
-                      //   "hideDuration": "1000",
-                      //   "timeOut": "5000",
-                      //   "extendedTimeOut": "1000",
-                      //   "showEasing": "swing",
-                      //   "hideEasing": "linear",
-                      //   "showMethod": "fadeIn",
-                      //   "hideMethod": "fadeOut"
-                      // }
-                      function danger(){
-                        toastr.danger("ERROR FOUND");
-                        alert("ERROR");
-                        <?php
-                          if(isset($_SESSION['danger'])){
-                        ?>
-                            
-                        <?php
-                          }   
-                        ?> 
-                      }
-                    </script>
-              <?php
-              header("Location: index.php",0,60);
+              header("Location: index.php");
+              exit();
             }
             else{
               $_SESSION['danger'] = "Incorrect Information";
               header("Location: index.php");
+              exit();
             }
           }
 
@@ -171,9 +148,32 @@
 </div>
 <!-- /.login-box -->
 
+<!-- sweetalert2 -->
+<script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     
 
-
+<script>
+  var Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 4000
+  });
+  <?php
+    if(isset($_SESSION['time']) && is_numeric($_SESSION['time']) && $_SESSION['time'] != 0){
+  ?>
+      Toast.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: 'You are logged out because there was no activity.\nPlease Login Again',
+        showConfirmButton: false,
+        timer: 4000
+      })
+  <?php
+      unset($_SESSION['time']);
+    }
+  ?>
+</script>
 
 <?php
   ob_end_flush();

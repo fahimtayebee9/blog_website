@@ -24,6 +24,7 @@
   ?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta http-equiv="refresh" content="30;url=logout.php?time=30&action=Logout" /> -->
   <link rel="shortcut icon" href="img/settings/<?=$web_Fav;?>" type="image/x-icon">
   <title>AdminLTE 3 | Dashboard</title>
 
