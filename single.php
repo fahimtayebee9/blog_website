@@ -182,7 +182,9 @@
                                                         `visitor_id` as visitor_ID, `is_parent` as parent, `status` as status_cmt, `cmt_date` as cmt_Date 
                                                         FROM comments WHERE post_id = $thePost AND is_parent = 0 AND status = 1 ORDER BY cmt_id DESC LIMIT 3";
                                     $resComment     = mysqli_query($db,$getAllComments);
-                                    $total_comment  = mysqli_num_rows($resComment);
+                                    $total_comment  = $db->query("SELECT `cmt_id` as cmt_ID, `comments` as comment_desc, `post_id` as post_ID, 
+                                                    `visitor_id` as visitor_ID, `is_parent` as parent, `status` as status_cmt, `cmt_date` as cmt_Date 
+                                                    FROM comments WHERE post_id = $thePost AND status = 1 ORDER BY cmt_id DESC")->num_rows;//mysqli_num_rows($resComment);
                                 ?>
                                         <!-- Comment Heading Start -->
                                         <div class="row">
