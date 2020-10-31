@@ -98,6 +98,14 @@
                                       <ul class="ml-4 mb-0 fa-ul text-muted">
                                         <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Address: <?=$address?></li>
                                         <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: <?=$phone?></li>
+                                        <li class="small mb-3"><span class="fa-li"><i class="fas fa-lg fa-clock"></i></span> Join Date #: 
+                                          <?php
+                                            $postDateArr = explode(' ', $join_date);
+                                            $datePart_post = explode('-',$postDateArr[0]);
+                                            $date_         = $datePart_post[2] . " " . substr(date('F', mktime(0, 0, 0, $datePart_post[1], 10)),0,3) . " ," . $datePart_post[0];
+                                            echo $date_;
+                                          ?>
+                                        </li>
                                       </ul>
                                     </div>
                                     <div class="col-5 text-center">

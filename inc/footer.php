@@ -175,6 +175,9 @@
     <!-- SWIPER Script -->
     <script type="text/javascript" src="assets/js/swiper.min.js"></script>
 
+    <!-- sweetalert2 -->
+    <script src="admin/plugins/sweetalert2/sweetalert2.min.js"></script>
+
     <script>
         toastr.options = {
             "closeButton": true,
@@ -193,6 +196,13 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
+
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
         
         <?php
             if(isset($_SESSION['toastr'])){
@@ -217,6 +227,43 @@
                     <?php
                 }
                 unset($_SESSION['toastr']);
+            }
+            else if(isset($_SESSION['update_status'])){
+                if(isset($_SESSION['type']) && $_SESSION['type'] == "info"){
+            ?>
+                    Toast.fire({
+                        position: 'top-end',
+                        icon: 'info',
+                        title: '<?=$_SESSION['update_status']?>',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+            <?php
+                }
+                else if(isset($_SESSION['type']) && $_SESSION['type'] == "success"){
+                ?>
+                    Toast.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '<?=$_SESSION['update_status']?>',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+                <?php
+                }
+                else if(isset($_SESSION['type']) && $_SESSION['type'] == "error"){
+                ?>
+                    Toast.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: '<?=$_SESSION['update_status']?>',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+                <?php
+                }
+                unset($_SESSION['update_status']);
+                unset($_SESSION['type']);
             }
         ?>
     </script>

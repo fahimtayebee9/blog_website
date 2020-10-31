@@ -111,7 +111,26 @@
                                 <div class="col-md-8">
                                     <div class="blog-info">
                                         <ul>
-                                            <li><i class="fa fa-calendar"></i><?php echo $post_date; ?></li>
+                                            <li><i class="fa fa-calendar"></i>
+                                                <?php 
+                                                    $am_array = ["7","8","9","9:30","10","11"];
+                                                    $postDateArr = explode(' ', $post_date);
+                                                    $datePart_post = explode('-',$postDateArr[0]);
+                                                    $date_         = $datePart_post[2] . " " . substr(date('F', mktime(0, 0, 0, $datePart_post[1], 10)),0,3) . " ," . $datePart_post[0];
+                                                    // echo $date_;
+                                                    $postTime      = explode(':',date("h:i:s",strtotime('+24 hour',strtotime($postDateArr[1]))));
+                                                    if(in_array($postTime[0],$am_array)){
+                                                        $date_ .= " ".date("h:i A",strtotime('+24 hour',strtotime($postDateArr[1])));
+                                                    }
+                                                    else if(!in_array($postTime[0],$am_array)){
+                                                        $date_ .= " ".date("h:i A",strtotime('+12 hour',strtotime($postDateArr[1])));
+                                                    }
+                                                    else{
+                                                        $date_ .= " ".date("h:i A",strtotime('+24 hour',strtotime($postDateArr[1])));
+                                                    }
+                                                    echo $date_;
+                                                ?>
+                                            </li>
                                             <li>
                                                 <?php
                                                     $sql = "SELECT * FROM users WHERE id = '$author_id'";
@@ -350,6 +369,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <!-- Comments Textarea Field -->
+                                                    <input type="hidden" name="cmt_idreply" id="cmt_idreply" value="">
                                                     <div class="form-group">
                                                         <textarea name="comments" class="form-input" placeholder="Your Comments Here..." style="resize: none;"></textarea>
                                                         <i class="fa fa-pencil-square-o"></i>
@@ -375,17 +395,17 @@
                         }
                         else if($do == "Insert"){
                             if($_SERVER['REQUEST_METHOD'] == "POST"){
-                                $user_name = $_POST['user_name'];
-                                $email     = $_POST['email'];
-                                $subject   = $_POST['subject'];
-                                $comments  = $_POST['comments'];
-                                $parent    = $_POST['comment_id'];
+                                $comments  = mysqli_real_escape_string( $db, $_POST['comments'] );
+                                $parent    = $_POST['cmt_idreply'];
                                 if(isset($parent)){
                                     $insertComment = "INSERT INTO `comments`(`comments`, `post_id`, `visitor_id`, `is_parent`, `status`, `cmt_date`) 
                                                         VALUES ('$comments','$thePost','{$_SESSION['visitorID']}','$parent',0,now())";
                                     $addComment    = mysqli_query($db,$insertComment);
                                     if($addComment){
+                                        $_SESSION['update_status'] = "Comment Posted Successfully. Waiting for Admin Approval.";
+                                        $_SESSION['type']          = "info";
                                         header("location: single.php?post=$thePost&do=Manage");
+                                        exit();
                                     }
                                     else{
                                         echo "<div class='alert alert-danger'>". mysqli_error($db) . "</div>";
@@ -424,7 +444,7 @@
     <!-- ::::::::::: Blog With Right Sidebar End ::::::::: -->
     <script>
         function setCommentId(cmt_Id){
-            document.getElementById('cmt_Id').value = cmt_Id;
+            document.getElementById('cmt_idreply').value = cmt_Id;
         }
     </script>
 

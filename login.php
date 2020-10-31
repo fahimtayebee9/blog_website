@@ -137,17 +137,15 @@
                         header("location: login.php?action=Login&post=$post");
                     }
                     else{
-                        unset($_SESSION['toastr']);
-                        $_SESSION['toastr'] = "Registration Success. Please Login To continue.";
-                        $_SESSION['toastr_type'] = "success";
+                        $_SESSION['update_status'] = "Registration Success. Please Wait for Admin approval.";
+                        $_SESSION['type'] = "success";
                         header("location: login.php?action=Login");
                         exit();
                     }
                 }
                 else{
-                    unset($_SESSION['toastr']);
-                    $_SESSION['toastr'] = "Registration Failed.".mysqli_error($db);
-                    $_SESSION['toastr_type'] = "error";
+                    $_SESSION['update_status'] = "Registration Failed.".mysqli_error($db);
+                    $_SESSION['type'] = "error";
                     header("location: login.php?action=Login");
                     exit();
                 }

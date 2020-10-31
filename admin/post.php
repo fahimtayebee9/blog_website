@@ -130,7 +130,14 @@
                                     <?php }
                                   ?>
                                 </td>
-                                <td><?php echo $post_date; ?></td>
+                                <td>
+                                  <?php 
+                                    $postDateArr = explode(' ', $post_date);
+                                    $datePart_post = explode('-',$postDateArr[0]);
+                                    $date_         = $datePart_post[2] . " " . substr(date('F', mktime(0, 0, 0, $datePart_post[1], 10)),0,3) . " ," . $datePart_post[0];
+                                    echo $date_;
+                                  ?>
+                                </td>
 
                                 <td>
                                   <a class="btn btn-info btn-sm" href="post.php?do=Edit&edit=<?php echo $post_id; ?>">
@@ -535,8 +542,8 @@
                       $status           = $_POST['status'];
                       $meta             = $_POST['meta'];
                       $description      = mysqli_real_escape_string($db,$_POST['description']) ;
-                      $metas            = explode(' ',$meta);
-                      $imageName    = $_FILES['image']['name'];
+                      $metas            = str_replace(' ',',',$meta);
+                      $imageName        = $_FILES['image']['name'];
 
                       if ( !empty($imageName) ){
                         // Preapre the Image
@@ -569,7 +576,6 @@
                       }
 
                       if ( empty($formErrors) ){
-
 
                         // Upload Image and Change the Password
                         if ( !empty($imageName) ){

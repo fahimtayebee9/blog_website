@@ -105,8 +105,9 @@
       toast: true,
       position: 'top-end',
       showConfirmButton: false,
-      timer: 3000
+      timer: 3500
     });
+
     <?php
       
       if(isset($_SESSION['search_warn'])){

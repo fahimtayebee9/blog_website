@@ -438,7 +438,7 @@
                     $error   = [];
                     $updateSQL = "UPDATE comments set status = '$status_up' WHERE cmt_id = '$comment_id' AND is_parent = '$is_parent'";
                     $resultUp  = mysqli_query($db,$updateSQL);
-                    if($updateRes){
+                    if($resultUp){
                         $_SESSION['update_status'] = "Comment Updated Successfully";
                         $_SESSION['type'] = "success";
                         header("location: comments.php?do=Manage");
@@ -447,15 +447,10 @@
                     else{
                         $_SESSION['update_status'] = "Comment Not Updated Successfully!!<br>" . mysqli_error($db);
                         $_SESSION['type'] = "error";
-                        // header("location: comments.php?do=Manage");
-                        // exit();
+                        header("location: comments.php?do=Manage");
+                        exit();
                     }
                 }
-                $comment_id = $_POST['updateID'];
-                $status_up  = $_POST['status']; 
-                $is_parent  = $_POST['is_parent'];
-
-                echo $updateSQL;
             }
         ?>
            

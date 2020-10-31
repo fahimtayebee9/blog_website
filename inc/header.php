@@ -71,6 +71,10 @@
     <!-- swiper CSS -->
     <link rel="stylesheet" type="text/css" href="assets/css/swiper.min.css">
 
+    <!-- SWEET ALERT 2 -->
+    <link rel="stylesheet" href="admin/plugins/sweetalert2/sweetalert2.min.css"> 
+    <link href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless@4/borderless.css" rel="stylesheet">
+
     <style>
         .swiper-container{
             margin: 0px!important;
@@ -86,10 +90,13 @@
                 <div class="col-md-12">
                     <nav class="navbar navbar-expand-lg navbar-light m-0 " >
                         <div class="collapse navbar-collapse justify-content-start w-50 m-0" id="navbarNavDropdown">
+                            <div class="top badge badge-info text-light mr-3">
+                                New Posts :
+                            </div>
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     <?php
-                                        $posts_sql = "SELECT * FROM post ORDER BY post_id DESC LIMIT 2";
+                                        $posts_sql = "SELECT * FROM post ORDER BY post_id DESC LIMIT 3";
                                         $result_post = mysqli_query($db,$posts_sql);
                                         while($rowPostx = mysqli_fetch_assoc($result_post)){
                                     ?>
